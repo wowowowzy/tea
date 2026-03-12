@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 import com.example.tea.entity.pojo.ChatModel.History;
 import com.example.tea.mapper.ChatMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -31,10 +32,13 @@ public class ChatController {
     @GetMapping( "/ai/generateStream")
 	public Flux<String> generateStream
             (@RequestParam(value = "message", defaultValue = "你好") String message,
-             @RequestParam(value = "sessionId",required = false) Long sessionId) {
+             @RequestParam(value = "sessionId",required = false) Long sessionId,
+             HttpServletResponse response) {
         if(sessionId==null){
             sessionId = snowflake.nextId();
         }
+        response.setHeader("sessionId", sessionId.toString());
+        response.setContentType("text/event-stream;charset=UTF-8");
         chatMapper.add(History.builder()
                 .datetime(LocalDateTime.now())
                 .content(message)
