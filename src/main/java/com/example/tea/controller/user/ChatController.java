@@ -1,10 +1,9 @@
 package com.example.tea.controller.user;
 
-import cn.hutool.core.lang.Snowflake;
-import cn.hutool.core.util.IdUtil;
 import com.example.tea.entity.pojo.ChatModel.History;
 import com.example.tea.mapper.ChatMapper;
-import jakarta.servlet.http.HttpServletResponse;
+import com.example.tea.utils.ThreadLocalUserIdUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.messages.Message;
@@ -17,33 +16,32 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
+@Slf4j
 public class ChatController {
     @Autowired
     private ChatClient chatClient;
     @Autowired
     private ChatMapper chatMapper;
-    private final Snowflake snowflake = IdUtil.getSnowflake();
 
     @GetMapping( "/ai/generateStream")
 	public Flux<String> generateStream
             (@RequestParam(value = "message", defaultValue = "你好") String message,
-             @RequestParam(value = "sessionId",required = false) Long sessionId,
-             HttpServletResponse response) {
-        if(sessionId==null){
-            sessionId = snowflake.nextId();
-        }
-        response.setHeader("sessionId", sessionId.toString());
-        response.setContentType("text/event-stream;charset=UTF-8");
+             @RequestParam(value = "sessionId") Long sessionId) {
+        Long userId = ThreadLocalUserIdUtil.getCurrentId();
         chatMapper.add(History.builder()
                 .datetime(LocalDateTime.now())
                 .content(message)
                 .role("user")
                 .sessionId(sessionId)
+                        .userId(userId)
                 .build());
         List<History> hisories = chatMapper.getHisories(sessionId);
         List<Message> MessageList = hisories.stream().map(history -> history.getRole().equals("user") ? new UserMessage(history.getContent())
@@ -65,7 +63,25 @@ public class ChatController {
                 .content(strBuilder[0].toString())
                 .role("assistant")
                 .sessionId(finalSessionId)
+                        .userId(userId)
                 .build()));
+    }
+    @GetMapping("/ai/getHistories")
+    public Map<Long,List<History>> getHistories(@RequestParam(value = "userId") Long userId){
+        HashMap<LocalDateTime, List<History>> map = new HashMap<>();
+        List<History> hisories = chatMapper.getHisoriesByUserId(userId);
+        Map<Long, List<History>> groupBySessionAndSort = hisories.stream()
+                .collect(Collectors.groupingBy(
+                        History::getSessionId, // 第一步：按sessionId分组
+                        // 第二步：对每个分组的列表按datetime排序（升序：从早到晚）
+                        Collectors.collectingAndThen(
+                                Collectors.toList(), // 先收集为列表
+                                list -> list.stream()
+                                        .sorted(Comparator.comparing(History::getDatetime))
+                                        .toList()
+                        )
+                ));
+        return groupBySessionAndSort;
     }
 
 }

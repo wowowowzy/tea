@@ -12,4 +12,7 @@ public interface ChatMapper {
 
     @Select("select * from sys_history where session_id=#{sessionId}")
     List<History> getHisories(long sessionId);
+
+    @Select("select * from sys_history where user_id=#{userId}")
+    List<History> getHisoriesByUserId(Long userId);
 }

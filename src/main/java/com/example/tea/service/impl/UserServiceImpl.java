@@ -1,5 +1,7 @@
 package com.example.tea.service.impl;
 
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
 import com.example.tea.entity.dto.User.LoginInfo;
 import com.example.tea.entity.dto.User.RegisterInfo;
 import com.example.tea.entity.pojo.Result;
@@ -23,6 +25,7 @@ public class UserServiceImpl implements UserService {
     private JwtUtil jwtUtil;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final Snowflake snowflake = IdUtil.getSnowflake();
     @Override
     public LoginResult login(LoginInfo loginInfo) {
         User user = userMapper.login(loginInfo.getUsername());
@@ -42,6 +45,7 @@ public class UserServiceImpl implements UserService {
                     .token(jwtUtil.generateToken(user.getId()))
                     .state(1)
                     .avatar(user.getAvatar())
+                    .sessionId(snowflake.nextId())
                     .build();
         }else return LoginResult.builder().state(0).reason("密码错误").build();
     }

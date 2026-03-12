@@ -4,12 +4,13 @@
 <mapper namespace="com.example.tea.mapper.ChatMapper">
 
     <insert id="add">
-        INSERT INTO `sys_history` ( `datetime`, `content`, `role`, `session_id`)
+        INSERT INTO `sys_history` ( `datetime`, `content`, `role`, `session_id`,`user_id`)
         VALUES (
                    #{datetime},
                    #{content},
                    #{role},
-                   #{sessionId}
+                   #{sessionId},
+                   #{userId}
                );
     </insert>
 </mapper>

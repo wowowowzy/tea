@@ -12,4 +12,5 @@ public class LoginResult {
     private int state;//1表示成功 0表示失败
     private String reason;
     private String avatar;//头像
+    private Long sessionId;//ai会话id
 }

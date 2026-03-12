@@ -13,4 +13,5 @@ public class History {
     private String content;
     private String role;
     private Long sessionId;
+    private Long userId;
 }
