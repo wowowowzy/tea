@@ -107,6 +107,10 @@
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-starter-model-ollama</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-deepseek</artifactId>
+        </dependency>
         <!-- Hutool核心包（包含雪花算法） -->
         <dependency>
             <groupId>cn.hutool</groupId>

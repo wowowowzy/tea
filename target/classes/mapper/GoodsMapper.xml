@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.example.tea.mapper.GoodsMapper">
+    <select id="findAllGoods" resultType="com.example.tea.entity.dto.Goods.GoodsDTO">
+        select goods_id,goods_name,goods_price,goods_image from goods
+        <where>
+            <if test="categoryId!=null">and category_id=#{categoryId}</if>
+            <if test="goodsName!=null and goodsName!=''">
+                and goods_name like concat('%',#{goodsName},'%')
+            </if>
+        </where>
+    </select>
+</mapper>
+

@@ -49,7 +49,7 @@ public class ChatController {
         Long finalSessionId = sessionId;
         return stream.doOnNext(s -> strBuilder[0].append(s)).doOnComplete( ()-> chatMapper.add(History.builder()
                 .datetime(LocalDateTime.now())
-                .content(message)
+                .content(strBuilder[0].toString())
                 .role("assistant")
                 .sessionId(finalSessionId)
                 .build()));
