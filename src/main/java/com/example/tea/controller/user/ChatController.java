@@ -64,7 +64,6 @@ public class ChatController {
     * 根据用userId查询聊天历史记录*/
     @GetMapping("/ai/getHistories")
     public Map<Long,List<History>> getHistories(@RequestParam(value = "userId") Long userId){
-        HashMap<LocalDateTime, List<History>> map = new HashMap<>();
         List<History> hisories = chatMapper.getHisoriesByUserId(userId);
         Map<Long, List<History>> groupBySessionAndSort = hisories.stream()
                 .collect(Collectors.groupingBy(
