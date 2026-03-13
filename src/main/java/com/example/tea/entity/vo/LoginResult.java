@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class LoginResult {
-    private Long id;
+    private Long userId;
     private String username;
     private String token;
     private int state;//1表示成功 0表示失败

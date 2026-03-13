@@ -2,6 +2,7 @@ package com.example.tea.controller.user;
 
 import com.example.tea.entity.pojo.ChatModel.History;
 import com.example.tea.entity.pojo.ChatModel.Prompt;
+import com.example.tea.entity.pojo.Result;
 import com.example.tea.mapper.ChatMapper;
 import com.example.tea.utils.ThreadLocalUserIdUtil;
 import org.springframework.ai.chat.client.ChatClient;
@@ -63,7 +64,7 @@ public class ChatController {
     /*
     * 根据用userId查询聊天历史记录*/
     @GetMapping("/ai/getHistories")
-    public Map<Long,List<History>> getHistories(@RequestParam(value = "userId") Long userId){
+    public Result getHistories(@RequestParam(value = "userId") Long userId){
         List<History> hisories = chatMapper.getHisoriesByUserId(userId);
         Map<Long, List<History>> groupBySessionAndSort = hisories.stream()
                 .collect(Collectors.groupingBy(
@@ -76,7 +77,7 @@ public class ChatController {
                                         .toList()
                         )
                 ));
-        return groupBySessionAndSort;
+        return Result.success(groupBySessionAndSort);
     }
 
 }

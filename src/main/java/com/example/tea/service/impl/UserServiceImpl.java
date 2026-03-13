@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
         boolean matches = bCryptPasswordEncoder.matches(loginInfo.getPassword(), user.getPassword());
         if(matches){
             return LoginResult.builder()
-                    .id(user.getId())
+                    .userId(user.getId())
                     .username(user.getUsername())
                     .token(jwtUtil.generateToken(user.getId()))
                     .state(1)

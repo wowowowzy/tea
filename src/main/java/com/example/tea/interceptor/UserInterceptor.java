@@ -35,5 +35,9 @@ public class UserInterceptor implements HandlerInterceptor {
         }
             return false;
     }
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        ThreadLocalUserIdUtil.removeCurrentId();
+    }
 
 }

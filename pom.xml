@@ -114,8 +114,8 @@
         <!-- Hutool核心包（包含雪花算法） -->
         <dependency>
             <groupId>cn.hutool</groupId>
-            <artifactId>hutool-core</artifactId>
-            <version>5.8.28</version> <!-- 推荐用最新稳定版 -->
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.38</version>
         </dependency>
     </dependencies>
     <dependencyManagement>

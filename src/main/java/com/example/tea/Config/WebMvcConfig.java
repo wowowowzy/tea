@@ -24,6 +24,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/api/user/login/**",
                         "/api/user/findAllGoods/**",
                         "/api/user/findGoodById/**",
+                        "/api/user/captcha/**",
                         "/api/upload"
                 );
 

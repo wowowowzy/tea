@@ -7,6 +7,7 @@ import com.example.tea.entity.vo.LoginResult;
 import com.example.tea.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,14 +18,14 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/login")//登录
-    public Result login(LoginInfo loginInfo){
+    public Result login(@RequestBody LoginInfo loginInfo){
         LoginResult result = userService.login(loginInfo);
         if(result.getState()==1){
             return Result.success(result);
         }else return Result.error(result.getReason());
     }
     @PostMapping("/register")//注册
-    public Result register(RegisterInfo registerInfo){
+    public Result register(@RequestBody RegisterInfo registerInfo){
         return userService.register(registerInfo);
     }
 }
