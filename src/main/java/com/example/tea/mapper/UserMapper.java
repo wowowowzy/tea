@@ -4,6 +4,7 @@ import com.example.tea.entity.pojo.User.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface UserMapper {
@@ -15,4 +16,7 @@ public interface UserMapper {
 
     @Select("select remark from sys_user where id = #{userId}")
     String checkAdmin(Long userId);
+
+    @Update("update sys_user set avatar = #{avatar} where id = #{userId}")
+    void setAvatar(String avatar,Long userId);
 }
