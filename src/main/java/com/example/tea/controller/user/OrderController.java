@@ -2,12 +2,10 @@ package com.example.tea.controller.user;
 
 import com.example.tea.entity.dto.Order.OrderPayDTO;
 import com.example.tea.entity.pojo.Result;
+import com.example.tea.entity.vo.Order.OrderListVO;
 import com.example.tea.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,12 +17,34 @@ public class OrderController {
 
     /**
      * 支付接口
-     * @param payDTOList
+     * @param list
      * @return
      */
     @PostMapping("/pay")
-    public Result pay(List<OrderPayDTO> payDTOList){
-        orderService.pay(payDTOList);
+    public Result pay(@RequestBody List<OrderPayDTO> list){
+        orderService.pay(list);
         return Result.success();
     }
+
+    /**
+     * 查询全部订单
+     * @return
+     */
+    @GetMapping("/getOrders")
+    public Result getOrders(){
+         List<OrderListVO> list = orderService.getOrders();
+        return Result.success(list);
+    }
+
+    /**
+     * 查询指定订单
+     * @param orderId
+     * @return
+     */
+    @GetMapping("/getOrderById")
+    public Result getOrderById(Long orderId){
+         OrderListVO vo = orderService.getOrderById(orderId);
+        return Result.success(vo);
+    }
+
 }
