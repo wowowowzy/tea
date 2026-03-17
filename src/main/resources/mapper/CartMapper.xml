@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.example.tea.mapper.CartMapper">
+
+
+    <insert id="insert">
+        insert into cart (user_id, goods_id, quantity, create_time, update_time)
+        values (#{userId},#{goodsId},#{quantity},#{createTime},#{updateTime})
+    </insert>
+    <update id="update">
+            UPDATE cart
+            SET quantity = #{quantity} ,update_time=#{updateTime}
+            WHERE goods_id=#{goodsId}
+            AND user_id = #{userId}
+    </update>
+    <delete id="delete">
+        DELETE FROM cart
+        WHERE goods_id IN
+        <foreach collection="goodsIds" item="goodsId" open="(" separator="," close=")">
+            #{goodsId}
+        </foreach>
+        and user_id=#{userId}
+    </delete>
+</mapper>
+

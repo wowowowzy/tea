@@ -6,10 +6,12 @@ import com.example.tea.entity.dto.User.LoginInfo;
 import com.example.tea.entity.dto.User.RegisterInfo;
 import com.example.tea.entity.pojo.Result;
 import com.example.tea.entity.pojo.User.User;
-import com.example.tea.entity.vo.LoginResult;
+import com.example.tea.entity.vo.User.LoginVO;
+import com.example.tea.entity.vo.User.UserVO;
 import com.example.tea.mapper.UserMapper;
 import com.example.tea.service.UserService;
 import com.example.tea.utils.JwtUtil;
+import com.example.tea.utils.ThreadLocalUserIdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,11 +29,11 @@ public class UserServiceImpl implements UserService {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private final Snowflake snowflake = IdUtil.getSnowflake();
     @Override
-    public LoginResult login(LoginInfo loginInfo) {
+    public LoginVO login(LoginInfo loginInfo) {
         User user = userMapper.login(loginInfo.getUsername());
 
         if (user == null) {
-            return LoginResult.builder()
+            return LoginVO.builder()
                     .state(0)
                     .reason("用户未注册")
                     .build(); // 直接返回“未注册”提示
@@ -39,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
         boolean matches = bCryptPasswordEncoder.matches(loginInfo.getPassword(), user.getPassword());
         if(matches){
-            return LoginResult.builder()
+            return LoginVO.builder()
                     .userId(user.getId())
                     .username(user.getUsername())
                     .token(jwtUtil.generateToken(user.getId()))
@@ -47,7 +49,7 @@ public class UserServiceImpl implements UserService {
                     .avatar(user.getAvatar())
                     .sessionId(snowflake.nextId())
                     .build();
-        }else return LoginResult.builder().state(0).reason("密码错误").build();
+        }else return LoginVO.builder().state(0).reason("密码错误").build();
     }
 
     @Override
@@ -84,5 +86,15 @@ public class UserServiceImpl implements UserService {
             return Result.error("用户名或手机号已存在，请更换后重试！");
         }
         return Result.success();
+    }
+
+    @Override
+    public UserVO show() throws Exception {
+        Long userId = ThreadLocalUserIdUtil.getCurrentId();
+        UserVO userVO = userMapper.show(userId);
+        if(userVO==null){
+            throw new Exception();
+        }
+        return userVO;
     }
 }

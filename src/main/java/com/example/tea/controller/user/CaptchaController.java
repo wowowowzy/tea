@@ -7,8 +7,12 @@ import com.example.tea.entity.pojo.Result;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
+import java.util.Enumeration;
+
+import static java.lang.System.out;
 
 
 /**
@@ -16,6 +20,7 @@ import java.io.IOException;
  */
 @RestController
 @RequestMapping("api/user/captcha")
+@Slf4j
 public class CaptchaController {
 
     /**
@@ -44,11 +49,10 @@ public class CaptchaController {
     public Result verifyCaptcha(@RequestParam("code") String userInputCode, HttpServletRequest request) {
         HttpSession session = request.getSession();
         String storedCode = (String) session.getAttribute("CaptchaCode");
-
         if (storedCode == null) {
             return Result.error("验证码已过期");
         }
-        // Hutool提供equalsIgnoreCase方法，直接对比（忽略大小写）
+
         boolean isMatch = storedCode.equalsIgnoreCase(userInputCode);
         if (isMatch) {
             session.removeAttribute("CaptchaCode"); // 验证成功后删除

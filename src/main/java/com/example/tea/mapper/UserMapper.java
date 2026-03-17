@@ -1,6 +1,7 @@
 package com.example.tea.mapper;
 
 import com.example.tea.entity.pojo.User.User;
+import com.example.tea.entity.vo.User.UserVO;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -19,4 +20,7 @@ public interface UserMapper {
 
     @Update("update sys_user set avatar = #{avatar} where id = #{userId}")
     void setAvatar(String avatar,Long userId);
+
+    @Select("select * from sys_user where id = #{userId} and status = 1")
+    UserVO show(Long userId);
 }

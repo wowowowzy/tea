@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/user/ai")
 public class ChatController {
     @Autowired
     private ChatClient chatClient;
@@ -34,7 +34,7 @@ public class ChatController {
     /*
     * 核心ai接口
     * */
-    @GetMapping( "/ai/generateStream")
+    @GetMapping( "/generateStream")
 	public Flux<String> generateStream
             (@RequestParam(value = "message", defaultValue = "你好") String message,
              @RequestParam(value = "sessionId") Long sessionId) {
@@ -63,7 +63,7 @@ public class ChatController {
     }
     /*
     * 根据用userId查询聊天历史记录*/
-    @GetMapping("/ai/getHistories")
+    @GetMapping("/getHistories")
     public Result getHistories(@RequestParam(value = "userId") Long userId){
         List<History> hisories = chatMapper.getHisoriesByUserId(userId);
         Map<Long, List<History>> groupBySessionAndSort = hisories.stream()
