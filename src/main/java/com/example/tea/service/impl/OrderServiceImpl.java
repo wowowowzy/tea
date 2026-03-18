@@ -18,6 +18,7 @@ import com.example.tea.utils.ThreadLocalUserIdUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -35,7 +36,8 @@ public class OrderServiceImpl implements OrderService {
     private GoodsMapper goodsMapper;
     private final Snowflake snowflake = IdUtil.getSnowflake();
     @Override
-    public void pay(List<OrderPayDTO> payDTOList,Long couponId) {
+    @Transactional(rollbackFor = Exception.class)
+    public void pay(List<OrderPayDTO> payDTOList, Long couponId) throws Exception {
         Long orderId = snowflake.nextId();
         Long userId = ThreadLocalUserIdUtil.getCurrentId();
         List<Order> orderList = payDTOList.stream().map(DTO -> Order.builder()
@@ -47,29 +49,35 @@ public class OrderServiceImpl implements OrderService {
                 .updateTime(LocalDateTime.now()).build()).toList();
         orderMapper.pay(orderList);
 
-        // 计算总价 long total
-         List<OrderAndGoodsDTO> list = goodsMapper.getTotalPrice(payDTOList);
-        Long total = 0L;
+        // 计算总价
+        List<OrderAndGoodsDTO> list = goodsMapper.getTotalPrice(payDTOList);
+        BigDecimal total = BigDecimal.valueOf(0);
         for (OrderPayDTO orderPayDTO : payDTOList) {
             Integer goodsOrderId = orderPayDTO.getGoodsId();
             Integer quantity = orderPayDTO.getQuantity();
             for (OrderAndGoodsDTO orderAndGoodsDTO : list) {
                 Integer goodsId = orderAndGoodsDTO.getGoodsId();
                 BigDecimal goodsPrice = orderAndGoodsDTO.getGoodsPrice();
-                if (goodsId.equals(goodsOrderId)){
-                    Long price = Math.multiplyExact(quantity,Long.valueOf(String.valueOf(goodsPrice)));
-                    total = price +total;
+                if (goodsId.equals(goodsOrderId)) {
+                    BigDecimal price = new BigDecimal(quantity).multiply(goodsPrice);
+                    total = price.add(total);
                 }
             }
         }
-        //获取优惠卷并且抵扣
-        if(couponId!=null){
+
+        // 获取优惠券并且抵扣
+        if (couponId != null) {
             Coupon coupon = couponMapper.getCouponByCouponId(couponId);
             BigDecimal minAmount = coupon.getMinAmount();
             BigDecimal reduceAmount = coupon.getReduceAmount();
-            if (total >= minAmount.longValue()&& Coupon.vaildate(coupon)){
-                total = total-reduceAmount.longValue();
+            if (!Coupon.vaildate(coupon)) { // 修复逻辑：校验失败直接抛异常
+                throw new Exception("优惠券无效（已过期/已使用）");
             }
+            if (total.compareTo(minAmount) < 0) { // 金额不足抛异常
+                throw new Exception("订单金额未达到优惠券使用门槛");
+            }
+            // 抵扣优惠券
+            total = total.subtract(reduceAmount);
             Coupon buildCoupon = Coupon.builder()
                     .id(couponId)
                     .status(Coupon.STATUS_USED)
@@ -78,26 +86,17 @@ public class OrderServiceImpl implements OrderService {
                     .orderId(orderId)
                     .build();
             couponMapper.useCoupon(buildCoupon);
-            OrderDetail orderDetail = OrderDetail.builder()
-                    .orderId(String.valueOf(orderId))
-                    .userId(ThreadLocalUserIdUtil.getCurrentId())
-                    .couponId(couponId)
-                    .totalPrice(BigDecimal.valueOf(total))
-                    .createTime(LocalDateTime.now())
-                    .updateTime(LocalDateTime.now())
-                    .build();
-            orderMapper.insertDetail(orderDetail);
         }
-        //不使用优惠卷
+
         OrderDetail orderDetail = OrderDetail.builder()
                 .orderId(String.valueOf(orderId))
-                .userId(ThreadLocalUserIdUtil.getCurrentId())
-                .totalPrice(BigDecimal.valueOf(total))
+                .userId(userId)
+                .couponId(couponId)
+                .totalPrice(total)
                 .createTime(LocalDateTime.now())
                 .updateTime(LocalDateTime.now())
                 .build();
         orderMapper.insertDetail(orderDetail);
-
     }
 
     @Override

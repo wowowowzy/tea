@@ -9,7 +9,7 @@ import java.util.List;
 
 @Mapper
 public interface CouponMapper {
-    void getQuestionCoupon(Coupon coupon);
+    void insertQuestionCoupon(Coupon coupon);
 
     @Select("select * from coupon where user_id = #{id}")
     List<CouponVO> getCoupon(Long id);

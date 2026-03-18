@@ -18,11 +18,11 @@
     </insert>
     <insert id="insertDetail">
         insert into order_detail (order_id,user_id,total_price,create_time,update_time
-        <if test="orderDetail.couponId!=null">, coupon_id</if>
+        <if test="couponId!=null">, coupon_id</if>
                                   )
-        values (#{orderDetail.orderId},#{orderDetail.userId},#{orderDetail.totalPrice},
-                #{orderDetail.createTime},#{orderDetail.updateTime}
-        <if test="orderDetail.couponId!=null">, #{orderDetail.couponId}</if>
+        values (#{orderId},#{userId},#{totalPrice},
+                #{createTime},#{updateTime}
+        <if test="couponId!=null">, #{couponId}</if>
                 )
 
     </insert>

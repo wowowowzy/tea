@@ -45,7 +45,7 @@ public class QuestionServiceImpl implements QuestionService {
     public String getAnswer(Integer id, String optionLabel) {
        String answer = questionMapper.getAnswer(id);
        if(StringUtils.equalsIgnoreCase(answer, optionLabel)){
-           couponMapper.getQuestionCoupon(Coupon.builder()
+           couponMapper.insertQuestionCoupon(Coupon.builder()
                    .userId(ThreadLocalUserIdUtil.getCurrentId())
                    .intro("满200-50全场通用")
                    .reduceAmount(BigDecimal.valueOf(50))

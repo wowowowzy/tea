@@ -6,7 +6,7 @@ import com.example.tea.entity.vo.Order.OrderListVO;
 import java.util.List;
 
 public interface OrderService {
-    void pay(List<OrderPayDTO> payDTOList,Long couponId);
+    void pay(List<OrderPayDTO> payDTOList,Long couponId) throws Exception;
 
    List<OrderListVO> getOrders();
 

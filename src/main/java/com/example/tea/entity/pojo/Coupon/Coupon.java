@@ -80,8 +80,8 @@ public class Coupon {
     public static final Integer STATUS_EXPIRED = 3;   // 已过期
     public static final Integer STATUS_INVALID = 4;   // 已作废
     public static boolean vaildate(Coupon coupon){
-        return coupon.userId.equals(ThreadLocalUserIdUtil.getCurrentId()) &&
-                coupon.endTime.isBefore(LocalDateTime.now())
+        return coupon.userId.equals(ThreadLocalUserIdUtil.getCurrentId())
+                && coupon.endTime.isAfter(LocalDateTime.now())
                 && coupon.status.equals(Coupon.STATUS_UNUSED);
         }
     }

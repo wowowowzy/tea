@@ -21,9 +21,13 @@ public class OrderController {
      */
     @PostMapping("/pay")
     public Result pay(@RequestBody List<OrderPayDTO> list,
-                      @RequestParam(required = false) Long couponId){
-        orderService.pay(list,couponId);
-        return Result.success();
+                      @RequestParam(required = false) Long couponId) {
+        try {
+            orderService.pay(list, couponId);
+            return Result.success();
+        } catch (Exception e) {
+            return Result.error("优惠券使用失败：" + e.getMessage());
+        }
     }
 
     /**
