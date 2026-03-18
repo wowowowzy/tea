@@ -20,4 +20,6 @@ public class OrderDTO {
     private BigDecimal goodsPrice;
     private Integer quantity;
     private String goodsIntro;
+    private Long couponId;
+    private BigDecimal totalPrice;
 }

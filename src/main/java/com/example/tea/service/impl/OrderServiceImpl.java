@@ -104,11 +104,13 @@ public class OrderServiceImpl implements OrderService {
         Long userId = ThreadLocalUserIdUtil.getCurrentId();
         List<OrderDTO> orders = orderMapper.getOrders(userId);
         Map<Long, List<OrderDTO>> listMap = orders.stream()
-                .collect(Collectors.groupingBy(orderDTO -> orderDTO.getOrderId()));
+                .collect(Collectors.groupingBy(OrderDTO::getOrderId));
         return listMap.entrySet().stream().map(entry -> {
             Long orderId = entry.getKey();
             List<OrderDTO> orderDTOS = entry.getValue();
             LocalDateTime createTime = orderDTOS.get(0).getCreateTime();
+            Long couponId = orderDTOS.get(0).getCouponId();
+            BigDecimal totalPrice = orderDTOS.get(0).getTotalPrice();
             List<OrderListDTO> list = orderDTOS.stream().map(orderDTO -> OrderListDTO.builder()
                     .goodsName(orderDTO.getGoodsName())
                     .goodsIntro(orderDTO.getGoodsIntro())
@@ -119,6 +121,8 @@ public class OrderServiceImpl implements OrderService {
             return OrderListVO.builder()
                     .orderId(orderId)
                     .createTime(createTime)
+                    .couponId(couponId)
+                    .totalPrice(totalPrice)
                     .orderDTOList(list).build();
         }).toList();
     }
@@ -135,6 +139,8 @@ public class OrderServiceImpl implements OrderService {
         return OrderListVO.builder()
                 .orderId(orderId)
                 .createTime(orders.get(0).getCreateTime())
+                .totalPrice(orders.get(0).getTotalPrice())
+                .couponId(orders.get(0).getCouponId())
                 .orderDTOList(list)
                 .build();
     }

@@ -34,9 +34,14 @@
             g.goods_name,
             g.goods_image,
             g.goods_price,
-            g.goods_intro
-        from `order` o left join goods g on o.goods_id = g.goods_id
-        where o.user_id = #{userId}
+            g.goods_intro,
+            od.coupon_id,
+            od.total_price
+        FROM `order` o
+                 LEFT JOIN goods g ON o.goods_id = g.goods_id
+                 LEFT JOIN order_detail od ON CAST(o.order_id AS CHAR) = od.order_id
+        WHERE o.user_id = #{userId}
+        ORDER BY o.create_time DESC
     </select>
     <select id="getOrderById" resultType="com.example.tea.entity.dto.Order.OrderDTO">
         SELECT
@@ -46,10 +51,16 @@
             g.goods_name,
             g.goods_image,
             g.goods_price,
-            g.goods_intro
-        from `order` o left join goods g on o.goods_id = g.goods_id
-        where o.user_id = #{userId} and o.order_id =#{orderId}
+            g.goods_intro,
+            od.coupon_id,
+            od.total_price
+        FROM `order` o
+                 LEFT JOIN goods g ON o.goods_id = g.goods_id
+                 LEFT JOIN order_detail od ON CAST(o.order_id AS CHAR) = od.order_id
+        WHERE o.user_id = #{userId} and o.order_id =#{orderId}
+        ORDER BY o.create_time DESC
     </select>
+
 
 
 </mapper>
