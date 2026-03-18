@@ -11,5 +11,12 @@
             </if>
         </where>
     </select>
+    <select id="getTotalPrice" resultType="com.example.tea.entity.dto.Order.OrderAndGoodsDTO">
+        select goods_id,goods_price from goods where goods_id in
+        <foreach collection="payDTOList" open="(" close=")" separator="," item="dto">
+            #{dto.goodsId}
+        </foreach>
+    </select>
+
 </mapper>
 

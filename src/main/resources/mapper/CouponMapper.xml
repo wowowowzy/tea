@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.example.tea.mapper.CouponMapper">
+
+
+    <update id="useCoupon">
+        update coupon set status=#{coupon.status},use_time=#{coupon.useTime}
+                        ,update_time=#{coupon.updateTime},order_id=#{coupon..orderId}
+        where id =#{coupon.id}
+
+    </update>
+    <select id="getQuestionCoupon">
+        INSERT INTO coupon (
+            user_id,
+            intro,
+            reduce_amount,
+            min_amount,
+            start_time,
+            end_time,
+            status,
+            create_time,
+            update_time
+        )
+        VALUES (
+                   #{coupon.userId},
+                   #{coupon.intro},
+                   #{coupon.reduceAmount},
+                   #{coupon.minAmount},
+                   #{coupon.startTime},
+                   #{coupon.endTime},
+                   #{coupon.status},
+                   #{coupon.createTime},
+                   #{coupon.updateTime}
+               )
+    </select>
+
+</mapper>

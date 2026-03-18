@@ -5,4 +5,5 @@ import com.example.tea.entity.vo.Question.QuestionVO;
 public interface QuestionService {
     QuestionVO getQuestion();
 
+    String getAnswer(Integer id, String optionLabel);
 }

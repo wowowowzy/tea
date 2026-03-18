@@ -20,8 +20,9 @@ public class OrderController {
      * @return
      */
     @PostMapping("/pay")
-    public Result pay(@RequestBody List<OrderPayDTO> list){
-        orderService.pay(list);
+    public Result pay(@RequestBody List<OrderPayDTO> list,
+                      @RequestParam(required = false) Long couponId){
+        orderService.pay(list,couponId);
         return Result.success();
     }
 

@@ -9,4 +9,10 @@
             left join tea_choice_option tco on tcq.question_id = tco.question_id
         where tcq.question_id = #{questionId}
     </select>
+    <select id="getAnswer" resultType="java.lang.String">
+        select tco.option_label from tea_choice_question tcq
+            left join tea_choice_option tco
+                on tcq.correct_option_id = tco.option_id
+        where tcq.question_id = #{id}
+    </select>
 </mapper>

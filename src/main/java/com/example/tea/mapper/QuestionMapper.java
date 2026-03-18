@@ -12,4 +12,6 @@ public interface QuestionMapper {
 
     @Select("select MAX(question_id) from tea_choice_question")
     Integer queryQuestionScope();
+
+    String getAnswer(Integer id);
 }

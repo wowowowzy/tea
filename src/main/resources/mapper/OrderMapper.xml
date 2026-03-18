@@ -16,6 +16,16 @@
             )
         </foreach>
     </insert>
+    <insert id="insertDetail">
+        insert into order_detail (order_id,user_id,total_price,create_time,update_time
+        <if test="orderDetail.couponId!=null">, coupon_id</if>
+                                  )
+        values (#{orderDetail.orderId},#{orderDetail.userId},#{orderDetail.totalPrice},
+                #{orderDetail.createTime},#{orderDetail.updateTime}
+        <if test="orderDetail.couponId!=null">, #{orderDetail.couponId}</if>
+                )
+
+    </insert>
     <select id="getOrders" resultType="com.example.tea.entity.dto.Order.OrderDTO">
         SELECT
             o.order_id,
