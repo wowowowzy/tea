@@ -34,6 +34,30 @@
         where id =#{id}
 
     </update>
+    <update id="updateExpiredCoupon">
+        UPDATE coupon
+        SET
+        status = CASE
+        <foreach collection="coupons" item="item" separator="">
+            WHEN id = #{item.id} THEN #{item.status}
+        </foreach>
+        END,
+        use_time = CASE
+        <foreach collection="coupons" item="item" separator="">
+            WHEN id = #{item.id} THEN #{item.useTime}
+        </foreach>
+        END,
+        update_time = CASE
+        <foreach collection="coupons" item="item" separator="">
+            WHEN id = #{item.id} THEN #{item.updateTime}
+        </foreach>
+        END
+        WHERE
+        id IN
+        <foreach collection="coupons" item="item" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </update>
 
 
 </mapper>

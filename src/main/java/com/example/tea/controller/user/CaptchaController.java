@@ -10,9 +10,6 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
-import java.util.Enumeration;
-
-import static java.lang.System.out;
 
 
 /**

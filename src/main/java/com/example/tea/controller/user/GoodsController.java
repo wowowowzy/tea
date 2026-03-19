@@ -13,12 +13,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class GoodsController {
     @Autowired
     private GoodsService goodsService;
-    //商品全查找(包含分类查找)
+
+    /**
+     * 商品全查找(包含分类查找)
+     * @param goodsQueryDTO
+     * @return
+     */
     @GetMapping ("/findAllGoods")
     public Result findAllGoods(GoodsQueryDTO goodsQueryDTO){
         return Result.success(goodsService.findAllGoods(goodsQueryDTO));
     }
-    //查找商品详情
+
+    /**
+     * 查找商品详情
+     * @param goodsId
+     * @return
+     */
     @GetMapping("/findGoodById")
     public Result findGoodById(Long goodsId){
         return goodsService.findGoodById(goodsId);

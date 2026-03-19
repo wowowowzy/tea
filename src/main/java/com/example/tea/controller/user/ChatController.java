@@ -31,9 +31,12 @@ public class ChatController {
     @Autowired
     private ChatMapper chatMapper;
 
-    /*
-    * 核心ai接口
-    * */
+    /**
+     * 核心ai接口
+     * @param message
+     * @param sessionId
+     * @return
+     */
     @GetMapping( "/generateStream")
 	public Flux<String> generateStream
             (@RequestParam(value = "message", defaultValue = "你好") String message,
@@ -61,8 +64,12 @@ public class ChatController {
                         .userId(userId)
                 .build()));
     }
-    /*
-    * 根据用userId查询聊天历史记录*/
+
+    /**
+     * 用userId查询聊天历史记录
+     * @param userId
+     * @return
+     */
     @GetMapping("/getHistories")
     public Result getHistories(@RequestParam(value = "userId") Long userId){
         List<History> hisories = chatMapper.getHisoriesByUserId(userId);

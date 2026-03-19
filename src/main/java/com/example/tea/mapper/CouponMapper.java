@@ -18,4 +18,10 @@ public interface CouponMapper {
     Coupon getCouponByCouponId(Long couponId);
 
     void useCoupon(Coupon coupon);
+
+    @Select("select  * from coupon where status = 1 and end_time < NOW()")
+    List<Coupon> getExpiredCoupon();
+
+    void updateExpiredCoupon(List<Coupon> coupons);
+
 }

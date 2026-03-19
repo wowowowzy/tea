@@ -14,14 +14,25 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/login")//登录
+    /**
+     * 登录
+     * @param loginInfo
+     * @return
+     */
+    @PostMapping("/login")
     public Result login(@RequestBody LoginInfo loginInfo){
         LoginVO result = userService.login(loginInfo);
         if(result.getState()==1){
             return Result.success(result);
         }else return Result.error(result.getReason());
     }
-    @PostMapping("/register")//注册
+
+    /**
+     * 注册
+     * @param registerInfo
+     * @return
+     */
+    @PostMapping("/register")
     public Result register(@RequestBody RegisterInfo registerInfo){
         return userService.register(registerInfo);
     }
