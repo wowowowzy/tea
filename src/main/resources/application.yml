@@ -12,6 +12,19 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
 spring:
+  data:
+    redis:
+      database: 7
+      password:
+      host: 127.0.0.1
+      port: 6379
+      timeout: 1000ms
+  # 缓存名称前缀（避免不同项目缓存key冲突）
+  cache:
+    redis:
+      key-prefix: "hot_data:"  # 缓存key前缀：hot_data:xxx
+      use-key-prefix: true  # 启用前缀
+
   datasource:
     url: jdbc:mysql://localhost:3306/book?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
     password: 123456
@@ -26,6 +39,7 @@ spring:
           model: deepseek-chat
         api-key: sk-vir53o4YsOrBdAXZb236q1MwK16k0xy6nKLPVBtTSjc3uFxO
 
+
 jwt:
   secret: asdfghjklzxcvbnmasdfghjklzxcvbnm123456
   expire: 72000000
@@ -35,5 +49,6 @@ alioss:
   access-key-secret: ${OSS_ACCESS_KEY_SECRET}
   bucket-name: java-web-itheima-zy
   endpoint: oss-cn-beijing.aliyuncs.com
+
 
 

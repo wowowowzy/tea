@@ -10,6 +10,7 @@ import com.example.tea.service.GoodsService;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 
@@ -33,6 +34,7 @@ public class GoodsServiceImpl implements GoodsService {
     }
 
     @Override
+    @Cacheable(value = "goods",key = "#goodsId")
     public Result findGoodById(Long goodsId) {
         GoodsVO goodsVO = goodsMapper.findGoodById(goodsId);
         return Result.success(goodsVO);
