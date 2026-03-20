@@ -23,6 +23,8 @@ public class CouponTask {
             coupon.setUseTime(LocalDateTime.now());
             return coupon;
         }).toList();
-        couponMapper.updateExpiredCoupon(coupons);
+        if(!coupons.isEmpty()){
+            couponMapper.updateExpiredCoupon(coupons);
+        }
     }
 }

@@ -1,7 +1,7 @@
 package com.example.tea.service.impl;
 
-import com.alibaba.druid.util.StringUtils;
 import com.example.tea.entity.dto.Question.QuestionDTO;
+import com.example.tea.entity.dto.Question.VaildateQuestionDTO;
 import com.example.tea.entity.pojo.Coupon.Coupon;
 import com.example.tea.entity.vo.Question.QuestionVO;
 import com.example.tea.mapper.CouponMapper;
@@ -10,11 +10,13 @@ import com.example.tea.service.QuestionService;
 import com.example.tea.utils.ThreadLocalUserIdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
@@ -23,28 +25,47 @@ public class QuestionServiceImpl implements QuestionService {
     @Autowired
     private CouponMapper couponMapper;
     @Override
-    public QuestionVO getQuestion() {
+    public List<QuestionVO> getQuestion() {
         Integer scope = questionMapper.queryQuestionScope();//查询当前questionId的最大值方便分配id
-        int random = ThreadLocalRandom.current().nextInt(1, scope+1);//随机数id根据sqlid变化
-        List<QuestionDTO> questionDTOS = questionMapper.queryQuestionById(random);
-        List<String> list = questionDTOS.stream().map(questionDTO -> {
-            StringBuilder builder = new StringBuilder();
-            builder.append(questionDTO.getOptionLabel())
-                    .append(".")
-                    .append(questionDTO.getOptionContent());
-            return builder.toString();
+        //随机数id根据sqlid变化
+        List<Integer> randoms = new ArrayList<>(5);
+        while (true){
+            int random = ThreadLocalRandom.current().nextInt(1, scope+1);
+            if (!randoms.contains(random)) {
+                randoms.add(random);
+            }
+            if (randoms.size() == 5) {
+                break;
+            }
+        }
+        List<QuestionDTO> questionDTOS = questionMapper.queryQuestionByIds(randoms);
+        Map<Integer, List<QuestionDTO>> collect = questionDTOS.stream().collect(Collectors.groupingBy(QuestionDTO::getQuestionId));
+        return collect.entrySet().stream().map(entry -> {
+            List<String> list = entry.getValue().stream().map(dto -> {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append(dto.getOptionLabel()).append(".").append(dto.getOptionContent());
+                return stringBuilder.toString();
+            }).toList();
+            return QuestionVO.builder()
+                    .questionId(entry.getKey())
+                    .questionContent(entry.getValue().get(0).getQuestionContent())
+                    .options(list).build();
         }).toList();
-        return QuestionVO.builder()
-                .questionId(questionDTOS.get(1).getQuestionId())
-                .questionContent(questionDTOS.get(1).getQuestionContent())
-                .options(list)
-                .build();
     }
 
     @Override
-    public String getAnswer(Integer id, String optionLabel) {
-       String answer = questionMapper.getAnswer(id);
-       if(StringUtils.equalsIgnoreCase(answer, optionLabel)){
+    public String getAnswer(List<VaildateQuestionDTO> userOptions) {
+        List<Integer> numList = userOptions.stream().map(VaildateQuestionDTO::getQuestionId).toList();
+        List<VaildateQuestionDTO> answer = questionMapper.getAnswer(numList);
+
+        Map<Integer, List<VaildateQuestionDTO>> answerList = answer.stream()
+                .collect(Collectors.groupingBy(VaildateQuestionDTO::getQuestionId));
+        int size = userOptions.stream().filter(user -> {
+            String optionLabel = answerList.get(user.getQuestionId()).get(0).getOptionLabel();
+            return optionLabel.equalsIgnoreCase(user.getOptionLabel());
+        }).toList().size();
+
+        if(size>=3){
            couponMapper.insertQuestionCoupon(Coupon.builder()
                    .userId(ThreadLocalUserIdUtil.getCurrentId())
                    .intro("满200-50全场通用")
@@ -57,9 +78,9 @@ public class QuestionServiceImpl implements QuestionService {
                    .updateTime(LocalDateTime.now())
                    .build()
            );
-           return "回答正确!获得的满200-50全场通用卷已经发放到您的账户";
+           return new StringBuilder().append("回答正确").append(size).append("道题目").append("!获得的满200-50全场通用卷已经发放到您的账户").toString();
        }else {
-           return "回答错误!";
+           return "需要回答三道以上题目才有奖励哦！";
        }
     }
 }

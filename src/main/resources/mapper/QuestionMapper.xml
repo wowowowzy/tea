@@ -4,15 +4,24 @@
 <mapper namespace="com.example.tea.mapper.QuestionMapper">
 
 
-    <select id="queryQuestionById" resultType="com.example.tea.entity.dto.Question.QuestionDTO">
+
+
+    <select id="queryQuestionByIds" resultType="com.example.tea.entity.dto.Question.QuestionDTO">
         select * from tea_choice_question tcq
-            left join tea_choice_option tco on tcq.question_id = tco.question_id
-        where tcq.question_id = #{questionId}
+        left join tea_choice_option tco on tcq.question_id = tco.question_id
+        where tcq.question_id in
+        <foreach collection="randoms" item="random" separator="," close=")" open="(">
+            #{random}
+        </foreach>
     </select>
-    <select id="getAnswer" resultType="java.lang.String">
-        select tco.option_label from tea_choice_question tcq
-            left join tea_choice_option tco
-                on tcq.correct_option_id = tco.option_id
-        where tcq.question_id = #{id}
+    <select id="getAnswer" resultType="com.example.tea.entity.dto.Question.VaildateQuestionDTO">
+        select tco.option_label,tcq.question_id from tea_choice_question tcq
+        left join tea_choice_option tco
+        on tcq.correct_option_id = tco.option_id
+        where tcq.question_id in
+        <foreach collection="questionIds" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
     </select>
+
 </mapper>

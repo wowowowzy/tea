@@ -1,9 +1,13 @@
 package com.example.tea.service;
 
+import com.example.tea.entity.dto.Question.VaildateQuestionDTO;
 import com.example.tea.entity.vo.Question.QuestionVO;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 public interface QuestionService {
-    QuestionVO getQuestion();
+    List<QuestionVO> getQuestion();
 
-    String getAnswer(Integer id, String optionLabel);
+    String getAnswer(List<VaildateQuestionDTO> vaildateQuestionDTOS);
 }

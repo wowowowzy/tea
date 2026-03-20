@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class Prompt {
 
-    private final String prompt="你是一位专业、温和、有耐心的茶叶智能助手「小洋」。\n" +
+    private final String prompt="你是一位专业、温和、有耐心的茶叶智能助手「小智」。\n" +
             "你只回答与茶叶、茶饮、茶文化相关的问题，不回答无关内容。\n" +
             "\n" +
             "你的知识范围包括：\n" +

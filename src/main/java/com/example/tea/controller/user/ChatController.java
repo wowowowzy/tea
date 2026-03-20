@@ -1,5 +1,6 @@
 package com.example.tea.controller.user;
 
+import cn.hutool.core.lang.Snowflake;
 import com.example.tea.entity.pojo.ChatModel.History;
 import com.example.tea.entity.pojo.ChatModel.Prompt;
 import com.example.tea.entity.pojo.Result;
@@ -85,6 +86,15 @@ public class ChatController {
                         )
                 ));
         return Result.success(groupBySessionAndSort);
+    }
+
+    /**
+     * 新建session(新对话)
+     * @return
+     */
+    @GetMapping("/newSession")
+    public Result newSession() {
+        return Result.success(new Snowflake().nextId());
     }
 
 }
