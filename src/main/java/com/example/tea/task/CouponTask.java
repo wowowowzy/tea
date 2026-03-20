@@ -9,13 +9,16 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.lang.System.out;
+
 @Component
 public class CouponTask {
     @Autowired
     private CouponMapper couponMapper;
     @Scheduled(cron = "0 0/10 * * * ?")
     public void updateExpiredCoupon() {
-        System.out.println("每隔10分钟执行优惠卷判断：" + LocalDateTime.now());
+
+        out.println("每隔10分钟执行优惠卷判断：" + LocalDateTime.now());
         List<Coupon> couponList = couponMapper.getExpiredCoupon();
         List<Coupon> coupons = couponList.stream().map(coupon -> {
             coupon.setUpdateTime(LocalDateTime.now());
@@ -25,6 +28,7 @@ public class CouponTask {
         }).toList();
         if(!coupons.isEmpty()){
             couponMapper.updateExpiredCoupon(coupons);
-        }
+            out.println("更新"+coupons.size()+"条数据");
+        }else out.println("暂无过期数据");
     }
 }

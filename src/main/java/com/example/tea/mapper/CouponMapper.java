@@ -14,6 +14,9 @@ public interface CouponMapper {
     @Select("select * from coupon where user_id = #{id}")
     List<CouponVO> getCoupon(Long id);
 
+    @Select("select * from coupon where user_id = #{id} and end_time > now() and status = 1")
+    List<CouponVO> getUnusedCoupon(Long id);
+
     @Select("select * from coupon where id=#{couponId}")
     Coupon getCouponByCouponId(Long couponId);
 

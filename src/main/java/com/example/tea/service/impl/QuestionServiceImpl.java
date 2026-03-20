@@ -3,6 +3,7 @@ package com.example.tea.service.impl;
 import com.example.tea.entity.dto.Question.QuestionDTO;
 import com.example.tea.entity.dto.Question.VaildateQuestionDTO;
 import com.example.tea.entity.pojo.Coupon.Coupon;
+import com.example.tea.entity.vo.Question.AnswerQuestionVO;
 import com.example.tea.entity.vo.Question.QuestionVO;
 import com.example.tea.mapper.CouponMapper;
 import com.example.tea.mapper.QuestionMapper;
@@ -54,33 +55,45 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public String getAnswer(List<VaildateQuestionDTO> userOptions) {
+    public AnswerQuestionVO getAnswer(List<VaildateQuestionDTO> userOptions) {
         List<Integer> numList = userOptions.stream().map(VaildateQuestionDTO::getQuestionId).toList();
         List<VaildateQuestionDTO> answer = questionMapper.getAnswer(numList);
 
-        Map<Integer, List<VaildateQuestionDTO>> answerList = answer.stream()
-                .collect(Collectors.groupingBy(VaildateQuestionDTO::getQuestionId));
-        int size = userOptions.stream().filter(user -> {
-            String optionLabel = answerList.get(user.getQuestionId()).get(0).getOptionLabel();
-            return optionLabel.equalsIgnoreCase(user.getOptionLabel());
-        }).toList().size();
+        List<VaildateQuestionDTO> wrong = answer.stream().filter(user -> {
+            List<VaildateQuestionDTO> list = userOptions.stream().filter(option ->
+                    option.getQuestionId().equals(user.getQuestionId())).toList();
+            return !list.get(0).getOptionLabel().equalsIgnoreCase(user.getOptionLabel());
+        }).toList();
 
-        if(size>=3){
-           couponMapper.insertQuestionCoupon(Coupon.builder()
-                   .userId(ThreadLocalUserIdUtil.getCurrentId())
-                   .intro("满200-50全场通用")
-                   .reduceAmount(BigDecimal.valueOf(50))
-                   .minAmount(BigDecimal.valueOf(200))
-                   .startTime(LocalDateTime.now())
-                   .endTime(LocalDateTime.now().plusDays(7))
-                   .status(Coupon.STATUS_UNUSED)
-                   .createTime(LocalDateTime.now())
-                   .updateTime(LocalDateTime.now())
-                   .build()
-           );
-           return new StringBuilder().append("回答正确").append(size).append("道题目").append("!获得的满200-50全场通用卷已经发放到您的账户").toString();
-       }else {
-           return "需要回答三道以上题目才有奖励哦！";
-       }
+        if(userOptions.size()-wrong.size()>=2){
+            //检验是否有未过期优惠卷
+            if (couponMapper.getUnusedCoupon(ThreadLocalUserIdUtil.getCurrentId()).size()==0) {
+                couponMapper.insertQuestionCoupon(Coupon.builder()
+                        .userId(ThreadLocalUserIdUtil.getCurrentId())
+                        .intro("满200-50全场通用")
+                        .reduceAmount(BigDecimal.valueOf(50))
+                        .minAmount(BigDecimal.valueOf(200))
+                        .startTime(LocalDateTime.now())
+                        .endTime(LocalDateTime.now().plusDays(1))
+                        .status(Coupon.STATUS_UNUSED)
+                        .createTime(LocalDateTime.now())
+                        .updateTime(LocalDateTime.now())
+                        .build()
+                );
+                return AnswerQuestionVO.builder()
+                        .msg(new StringBuffer().append("回答正确").append(userOptions.size()-wrong.size()).append("道题目").append("!获得的满200-50全场通用卷已经发放到您的账户").toString())
+                        .wrongList(wrong)
+                        .build();
+            }else return AnswerQuestionVO.builder()
+                    .msg(new StringBuffer().append("回答正确").append(userOptions.size()-wrong.size()).append("道题目").append("但24小时只能获取一张优惠卷").toString())
+                    .wrongList(wrong)
+                    .build();
+
+       }else return AnswerQuestionVO.builder()
+                    .msg(new StringBuffer().append("回答正确").append(userOptions.size()-wrong.size()).append("道题目").append("需要三题以上才能获取优惠卷").toString())
+                    .wrongList(wrong)
+                    .build();
+
+
     }
 }
