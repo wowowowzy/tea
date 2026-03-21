@@ -1,6 +1,7 @@
 package com.example.tea.service;
 
 import com.example.tea.entity.dto.Community.CommunityQueryDTO;
+import com.example.tea.entity.dto.Community.NewCommentDTO;
 import com.example.tea.entity.dto.Community.PostCreateDTO;
 import com.example.tea.entity.dto.Community.UpdateDTO;
 import com.example.tea.entity.pojo.PageResult;
@@ -27,4 +28,12 @@ public interface CommunityService {
     void updateMyPost(UpdateDTO updateMyPost);
 
     void deleteMyPost(Long postId);
+
+    void comment(NewCommentDTO newCommentDTO);
+
+    void deleteComment(Long id);
+
+    void switchLikeComment(Long id,Integer cancel);
+
+    void switchLikePost(Long id,Integer cancel);
 }

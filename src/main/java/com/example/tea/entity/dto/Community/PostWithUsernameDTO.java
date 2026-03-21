@@ -22,11 +22,11 @@ public class PostWithUsernameDTO {
     private Integer commentCount;
     /** 收藏数 */
     private Integer collectCount;
-    /** 状态：1-正常，0-删除，2-封禁 */
-    private Integer status;
     /** 创建时间 */
     private LocalDateTime createTime;
     /** 更新时间 */
     private LocalDateTime updateTime;
     private String username;
+    private String image;
+    private Integer status;
 }

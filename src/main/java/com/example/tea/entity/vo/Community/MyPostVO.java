@@ -16,4 +16,5 @@ public class MyPostVO {
     private Integer collectCount;
     //帖子id
     private Long id;
+    private String image;
 }

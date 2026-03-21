@@ -32,4 +32,5 @@ public class PostDetailVO {
     private Integer collectCount;
     /** 创建时间 */
     private LocalDateTime createTime;
+    private String image;
 }

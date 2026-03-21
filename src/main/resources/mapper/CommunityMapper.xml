@@ -6,8 +6,16 @@
     <!-- 新增帖子 -->
     <insert id="insert" parameterType="com.example.tea.entity.pojo.Community.Post"
             useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO t_post (user_id, title, content, like_count, comment_count, collect_count, status)
-        VALUES (#{userId}, #{title}, #{content}, 0, 0, 0, 1)
+        INSERT INTO t_post (user_id, title, content, like_count, comment_count, collect_count, status,update_time,create_time)
+        VALUES (#{userId}, #{title}, #{content}, 0, 0, 0, 1,now(),now())
+    </insert>
+    <insert id="comment">
+        insert into t_comment(post_id, user_id, content, parent_id, to_user_id, like_count, status, create_time, update_time)
+            values (#{dto.postId},#{userId},#{dto.content},#{dto.parentId},#{dto.toUserId},0,1,now(),now())
+    </insert>
+    <insert id="addLike">
+        insert into like_record(user_id, target_id, target_type, create_time, is_cancel)
+        values (#{userId},#{targetId},#{targetType},#{createTime},#{isCancel})
     </insert>
     <update id="updateMyPost">
             UPDATE t_post
@@ -22,6 +30,16 @@
             </set>
             WHERE id = #{postId} and user_id= #{userId}
     </update>
+    <update id="updateLike">
+        update like_record set is_cancel =#{cancel}
+        where target_id=#{id} and user_id=#{userId} and target_type=#{type}
+    </update>
+    <delete id="deleteComment">
+        delete from t_comment where id in
+        <foreach collection="list" separator="," open="(" close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
 
 
     <!-- 查询帖子总数 -->
@@ -29,22 +47,41 @@
         SELECT COUNT(*) FROM t_post WHERE status = 1
     </select>
 
-    <select id="selectById" resultType="com.example.tea.entity.dto.Community.PostWithUsernameDTO">
-        SELECT t.*,u.username
-        FROM t_post t left join sys_user u on t.user_id = u.id
-        WHERE id = #{postId}
-    </select>
+
+
     <select id="getPostList" resultType="com.example.tea.entity.vo.Community.PostListPageVO">
-        select t.title,t.content,t.like_count,
-               t.collect_count,t.comment_count,t.id,u.id as userId,u.username
+        select t.title,t.content,t.like_count,t.image,
+               t.collect_count,t.comment_count,t.id as postId ,u.id as userId,u.username
         from t_post t left join sys_user u on u.id =t.user_id
         <where>
             <if test="name!=null and name!=''">t.title like concat('%',#{name},'%')</if>
         </where>
     </select>
     <select id="getMyPost" resultType="com.example.tea.entity.vo.Community.MyPostVO">
-        select title,content,like_count,comment_count,collect_count,id from t_post
+        select title,content,like_count,comment_count,collect_count,id,image from t_post
         where user_id = #{userId}
     </select>
+    <select id="getAssociationComment" resultType="java.lang.Long">
+        select id from t_comment where to_user_id = #{id} OR parent_id = #{id}
+    </select>
+    <select id="selectById" resultType="com.example.tea.entity.dto.Community.PostWithUsernameDTO">
+        SELECT
+            t.id,
+            t.user_id,
+            t.title,
+            t.content,
+            t.like_count,
+            t.comment_count,
+            t.collect_count,
+            t.create_time,
+            t.update_time,
+            u.username,
+            t.image,
+            u.status
+        FROM t_post t
+                 LEFT JOIN sys_user u ON t.user_id = u.id
+        WHERE t.id = #{postId}
+    </select>
+
 
 </mapper>

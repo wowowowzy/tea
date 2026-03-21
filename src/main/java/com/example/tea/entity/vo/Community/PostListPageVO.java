@@ -15,8 +15,9 @@ public class PostListPageVO {
     private Integer commentCount;
     private Integer collectCount;
     //帖子id
-    private Long id;
+    private Long postId;
     /** 发布用户ID */
     private Long userId;
     private String username;
+    private String image;
 }

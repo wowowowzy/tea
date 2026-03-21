@@ -1,6 +1,8 @@
 package com.example.tea.service.impl;
 
 import com.example.tea.entity.dto.Community.*;
+import com.example.tea.entity.pojo.Community.Comment;
+import com.example.tea.entity.pojo.Community.Like;
 import com.example.tea.entity.pojo.Community.Post;
 import com.example.tea.entity.pojo.PageResult;
 import com.example.tea.entity.vo.Community.MyPostVO;
@@ -15,6 +17,9 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -51,7 +56,7 @@ public class CommunityServiceImpl implements CommunityService {
         PostWithUsernameDTO post = communityMapper.selectById(postId);
         List<CommentDTO> comments = communityMapper.getCommentByPostId(postId);
 
-        if (post == null || post.getStatus() == 0) {
+        if (post == null|| post.getStatus().equals(0)) {
             throw new RuntimeException("帖子不存在或已删除");
         }
         PostDetailVO detailVO = PostDetailVO.builder().build();
@@ -100,6 +105,71 @@ public class CommunityServiceImpl implements CommunityService {
     public void deleteMyPost(Long postId) {
         communityMapper.deleteMyPost(postId,ThreadLocalUserIdUtil.getCurrentId());
     }
+
+    @Override
+    @Transactional
+    public void comment(NewCommentDTO newCommentDTO) {
+        if(SensitiveWordHelper.contains(newCommentDTO.getContent())){
+            String string = new StringBuilder().append("包含违禁词")
+                    .append(SensitiveWordHelper.findAll(newCommentDTO.getContent())).toString();
+            throw new RuntimeException(string);
+        }else {
+            communityMapper.comment(newCommentDTO,ThreadLocalUserIdUtil.getCurrentId());
+            communityMapper.addCommentNum(newCommentDTO.getPostId());
+        }
+
+    }
+
+    @Override
+    @Transactional
+    public void deleteComment(Long id) {
+        List<Long> integers = communityMapper.getAssociationComment(id);
+        integers.add(id);
+        communityMapper.deleteComment(integers);
+    }
+
+    @Override
+    public void switchLikeComment(Long commentId, Integer cancel) {
+        //cancel=-1时为取消点赞
+        communityMapper.likeComment(commentId,cancel);
+        //查看是否是新纪录
+        Like like =  communityMapper.check(commentId,Like.TYPE_COMMENT,ThreadLocalUserIdUtil.getCurrentId());
+        if(like == null){
+            //新纪录一定是点赞 cancel=1
+            communityMapper.addLike(Like.builder()
+                    .userId(ThreadLocalUserIdUtil.getCurrentId())
+                    .targetId(commentId)
+                    .targetType(Like.TYPE_COMMENT)
+                    .createTime(LocalDateTime.now())
+                    .isCancel(1).build());
+        }else
+            //老记录则传cancel=1为点赞,-1为取消
+            communityMapper.updateLike(commentId,ThreadLocalUserIdUtil.getCurrentId(),Like.TYPE_COMMENT,cancel);
+
+    }
+
+
+    @Override
+    public void switchLikePost(Long postId, Integer cancel) {
+        communityMapper.likePost(postId,cancel);
+        //查看是否是新纪录
+        Like like =  communityMapper.check(postId,Like.TYPE_POST,ThreadLocalUserIdUtil.getCurrentId());
+        if(like == null){
+            //新纪录一定是点赞 cancel=1
+            communityMapper.addLike(Like.builder()
+                    .userId(ThreadLocalUserIdUtil.getCurrentId())
+                    .targetId(postId)
+                    .targetType(Like.TYPE_POST)
+                    .createTime(LocalDateTime.now())
+                    .isCancel(1).build());
+        }else
+            //老记录则传cancel=1为点赞,-1为取消
+            communityMapper.updateLike(postId,ThreadLocalUserIdUtil.getCurrentId(),Like.TYPE_POST,cancel);
+
+    }
+
+
+
 
 
 }

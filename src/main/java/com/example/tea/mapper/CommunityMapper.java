@@ -1,16 +1,13 @@
 package com.example.tea.mapper;
 
-import com.example.tea.entity.dto.Community.CommentDTO;
-import com.example.tea.entity.dto.Community.CommunityQueryDTO;
-import com.example.tea.entity.dto.Community.PostWithUsernameDTO;
-import com.example.tea.entity.dto.Community.UpdateMyPostDTO;
+import com.example.tea.entity.dto.Community.*;
+import com.example.tea.entity.pojo.Community.Comment;
+import com.example.tea.entity.pojo.Community.Like;
 import com.example.tea.entity.pojo.Community.Post;
 import com.example.tea.entity.vo.Community.MyPostVO;
 import com.example.tea.entity.vo.Community.PostListPageVO;
 import com.github.pagehelper.Page;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -45,4 +42,29 @@ public interface CommunityMapper {
 
     @Delete("delete from t_post where id=#{postId} and user_id=#{currentId}")
     void deleteMyPost(Long postId, Long currentId);
+
+    void comment(@Param(value = "dto") NewCommentDTO newCommentDTO,@Param("userId") Long userId);
+
+    List<Long> getAssociationComment(Long id);
+
+    void deleteComment(List<Long> list);
+
+    @Update("UPDATE t_post SET comment_count = comment_count + 1 where id=#{postId}")
+    void addCommentNum(Long postId);
+
+    @Update("UPDATE t_comment SET like_count = like_count + #{cancel} where id=#{id} ")
+    void likeComment(Long id,Integer cancel);
+
+    @Select("select * from like_record where user_id=#{userId} and target_type=#{type} and target_id=#{id}")
+    Like check(Long id, Integer type, Long userId);
+
+    void addLike(Like build);
+
+    void updateLike(Long id, Long userId, Integer type,Integer cancel);
+
+    @Update("UPDATE t_post SET like_count = like_count + #{cancel} where id=#{id} ")
+    void likePost(Long id,Integer cancel);
+
+    @Update("update t_post set image =#{filePath} where id=#{postId}")
+    void addImage(String filePath, Long postId);
 }
