@@ -50,8 +50,8 @@
 
 
     <select id="getPostList" resultType="com.example.tea.entity.vo.Community.PostListPageVO">
-        select t.title,t.content,t.like_count,t.image,
-               t.collect_count,t.comment_count,t.id as postId ,u.id as userId,u.username
+        select t.title,t.content,t.like_count,
+               t.collect_count,t.comment_count,t.id as postId ,u.id as userId,u.username,t.image
         from t_post t left join sys_user u on u.id =t.user_id
         <where>
             <if test="name!=null and name!=''">t.title like concat('%',#{name},'%')</if>
