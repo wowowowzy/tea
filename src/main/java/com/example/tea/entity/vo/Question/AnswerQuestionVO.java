@@ -13,6 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class AnswerQuestionVO {
-    private List<VaildateQuestionDTO> wrongList;
+    private List<VaildateQuestionDTO> answerList;
     private String msg;
 }

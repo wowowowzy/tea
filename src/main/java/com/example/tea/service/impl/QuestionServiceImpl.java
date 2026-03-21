@@ -82,16 +82,16 @@ public class QuestionServiceImpl implements QuestionService {
                 );
                 return AnswerQuestionVO.builder()
                         .msg(new StringBuffer().append("回答正确").append(userOptions.size()-wrong.size()).append("道题目").append("!获得的满200-50全场通用卷已经发放到您的账户").toString())
-                        .wrongList(wrong)
+                        .answerList(answer)
                         .build();
             }else return AnswerQuestionVO.builder()
                     .msg(new StringBuffer().append("回答正确").append(userOptions.size()-wrong.size()).append("道题目").append("但24小时只能获取一张优惠卷").toString())
-                    .wrongList(wrong)
+                    .answerList(answer)
                     .build();
 
        }else return AnswerQuestionVO.builder()
                     .msg(new StringBuffer().append("回答正确").append(userOptions.size()-wrong.size()).append("道题目").append("需要三题以上才能获取优惠卷").toString())
-                    .wrongList(wrong)
+                .answerList(answer)
                     .build();
 
 
