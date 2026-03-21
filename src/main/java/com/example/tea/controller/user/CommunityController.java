@@ -85,7 +85,7 @@ public class CommunityController {
     }
 
     /**
-     * 删帖
+     * 删除帖子
      *
      * @return
      */
