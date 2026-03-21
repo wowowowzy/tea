@@ -1,0 +1,34 @@
+# IDEA配置文件
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Maven/Gradle编译产物
+target/
+build/
+*.jar
+*.war
+*.ear
+*.class
+
+# 其他常见不需要上传的文件
+# 日志文件
+logs/
+*.log
+
+# 临时文件
+*.tmp
+*.temp
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# Maven本地仓库缓存
+.m2/
+
+# Redis/数据库相关
+*.rdb
+*.log.db
