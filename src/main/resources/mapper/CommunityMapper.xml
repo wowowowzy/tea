@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.tea.mapper.CommunityMapper">
+
+    <!-- 新增帖子 -->
+    <insert id="insert" parameterType="com.example.tea.entity.pojo.Community.Post"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_post (user_id, title, content, like_count, comment_count, collect_count, status)
+        VALUES (#{userId}, #{title}, #{content}, 0, 0, 0, 1)
+    </insert>
+    <update id="updateMyPost">
+            UPDATE t_post
+            <set>
+                <if test="title != null and title != ''">
+                    title = #{title},
+                </if>
+                <if test="content != null and content != ''">
+                    content = #{content},
+                </if>
+                update_time = NOW()
+            </set>
+            WHERE id = #{postId} and user_id= #{userId}
+    </update>
+
+
+    <!-- 查询帖子总数 -->
+    <select id="selectPostTotal" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM t_post WHERE status = 1
+    </select>
+
+    <select id="selectById" resultType="com.example.tea.entity.dto.Community.PostWithUsernameDTO">
+        SELECT t.*,u.username
+        FROM t_post t left join sys_user u on t.user_id = u.id
+        WHERE id = #{postId}
+    </select>
+    <select id="getPostList" resultType="com.example.tea.entity.vo.Community.PostListPageVO">
+        select t.title,t.content,t.like_count,
+               t.collect_count,t.comment_count,t.id,u.id as userId,u.username
+        from t_post t left join sys_user u on u.id =t.user_id
+        <where>
+            <if test="name!=null and name!=''">t.title like concat('%',#{name},'%')</if>
+        </where>
+    </select>
+    <select id="getMyPost" resultType="com.example.tea.entity.vo.Community.MyPostVO">
+        select title,content,like_count,comment_count,collect_count,id from t_post
+        where user_id = #{userId}
+    </select>
+
+</mapper>

@@ -23,4 +23,7 @@ public interface UserMapper {
 
     @Select("select * from sys_user where id = #{userId} and status = 1")
     UserVO show(Long userId);
+
+    @Select("select username from sys_user where id=#{userId}")
+    String getNameByUserId(Long userId);
 }

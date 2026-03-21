@@ -10,7 +10,7 @@ import java.util.List;
 public interface ChatMapper {
     void add(History history);
 
-    @Select("select * from sys_history where session_id=#{sessionId}")
+    @Select("select * from sys_history where session_id=#{sessionId} ORDER BY datetime DESC LIMIT 16")
     List<History> getHisories(long sessionId);
 
     @Select("select * from sys_history where user_id=#{userId}")

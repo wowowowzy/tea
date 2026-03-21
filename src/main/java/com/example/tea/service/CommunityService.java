@@ -1,0 +1,30 @@
+package com.example.tea.service;
+
+import com.example.tea.entity.dto.Community.CommunityQueryDTO;
+import com.example.tea.entity.dto.Community.PostCreateDTO;
+import com.example.tea.entity.dto.Community.UpdateDTO;
+import com.example.tea.entity.pojo.PageResult;
+import com.example.tea.entity.vo.Community.MyPostVO;
+import com.example.tea.entity.vo.Community.PostDetailVO;
+
+import java.util.List;
+
+public interface CommunityService {
+    /**
+     * 发布新帖子
+     */
+    void createPost(PostCreateDTO dto);
+
+    /**
+     * 查询帖子详情
+     */
+    PostDetailVO getPostDetail(Long postId);
+
+    PageResult getPostList(CommunityQueryDTO communityQueryDTO);
+
+    List<MyPostVO> getMyPost();
+
+    void updateMyPost(UpdateDTO updateMyPost);
+
+    void deleteMyPost(Long postId);
+}
