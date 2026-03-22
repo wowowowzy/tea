@@ -17,7 +17,6 @@ public class CouponTask {
     private CouponMapper couponMapper;
     @Scheduled(cron = "0 0/30 * * * ?")
     public void updateExpiredCoupon() {
-
         out.println("每隔30分钟执行优惠卷判断：" + LocalDateTime.now());
         List<Coupon> couponList = couponMapper.getExpiredCoupon();
         List<Coupon> coupons = couponList.stream().map(coupon -> {
