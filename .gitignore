@@ -21,11 +21,6 @@ logs/
 # 临时文件
 *.tmp
 *.temp
-
-# 操作系统文件
-.DS_Store
-Thumbs.db
-
 # Maven本地仓库缓存
 .m2/
 
