@@ -82,6 +82,14 @@
                  LEFT JOIN sys_user u ON t.user_id = u.id
         WHERE t.id = #{postId}
     </select>
+    <select id="getPostListByPostId" resultType="com.example.tea.entity.vo.Community.MyCollectVO">
+        select t.id,u.username as writerName,t.title,t.content,t.like_count,t.comment_count,t.collect_count,t.image
+        from t_post t left join sys_user u on t.user_id = u.id
+        where t.id in
+            <foreach collection="list" item="num" open="(" close=")" separator=",">
+                #{num}
+            </foreach>
+    </select>
 
 
 </mapper>

@@ -1,10 +1,12 @@
 package com.example.tea.service.impl;
 
 import com.example.tea.entity.dto.Community.*;
+import com.example.tea.entity.pojo.Community.Collect;
 import com.example.tea.entity.pojo.Community.Comment;
 import com.example.tea.entity.pojo.Community.Like;
 import com.example.tea.entity.pojo.Community.Post;
 import com.example.tea.entity.pojo.PageResult;
+import com.example.tea.entity.vo.Community.MyCollectVO;
 import com.example.tea.entity.vo.Community.MyPostVO;
 import com.example.tea.entity.vo.Community.PostDetailVO;
 import com.example.tea.entity.vo.Community.PostListPageVO;
@@ -129,9 +131,9 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
+    @Transactional
     public void switchLikeComment(Long commentId, Integer cancel) {
         //cancel=-1时为取消点赞
-        communityMapper.likeComment(commentId,cancel);
         //查看是否是新纪录
         Like like =  communityMapper.check(commentId,Like.TYPE_COMMENT,ThreadLocalUserIdUtil.getCurrentId());
         if(like == null){
@@ -142,16 +144,20 @@ public class CommunityServiceImpl implements CommunityService {
                     .targetType(Like.TYPE_COMMENT)
                     .createTime(LocalDateTime.now())
                     .isCancel(1).build());
-        }else
+
+            communityMapper.likeComment(commentId,cancel);
+        }else {
             //老记录则传cancel=1为点赞,-1为取消
-            communityMapper.updateLike(commentId,ThreadLocalUserIdUtil.getCurrentId(),Like.TYPE_COMMENT,cancel);
+            communityMapper.updateLike(commentId, ThreadLocalUserIdUtil.getCurrentId(), Like.TYPE_COMMENT, cancel);
+            communityMapper.likeComment(commentId,cancel);
+        }
 
     }
 
 
     @Override
+    @Transactional
     public void switchLikePost(Long postId, Integer cancel) {
-        communityMapper.likePost(postId,cancel);
         //查看是否是新纪录
         Like like =  communityMapper.check(postId,Like.TYPE_POST,ThreadLocalUserIdUtil.getCurrentId());
         if(like == null){
@@ -162,14 +168,43 @@ public class CommunityServiceImpl implements CommunityService {
                     .targetType(Like.TYPE_POST)
                     .createTime(LocalDateTime.now())
                     .isCancel(1).build());
-        }else
+            communityMapper.likePost(postId,cancel);
+        }else {
             //老记录则传cancel=1为点赞,-1为取消
-            communityMapper.updateLike(postId,ThreadLocalUserIdUtil.getCurrentId(),Like.TYPE_POST,cancel);
+            communityMapper.updateLike(postId, ThreadLocalUserIdUtil.getCurrentId(), Like.TYPE_POST, cancel);
+            communityMapper.likePost(postId,cancel);
+        }
 
     }
 
+    @Override
+    @Transactional
+    public void switchCollect(Long id, Integer cancel) {
+        //查看是否是新纪录
+         Collect collect = communityMapper.checkCollect(id,ThreadLocalUserIdUtil.getCurrentId());
+        //新纪录一定是点赞 cancel=1
+         if (collect == null){
+             communityMapper.addCollect(Collect.builder()
+                     .userId(ThreadLocalUserIdUtil.getCurrentId())
+                     .postId(id)
+                     .createTime(LocalDateTime.now())
+                     .isCancel(1).build());
+             communityMapper.collectPost(id,cancel);
+         }else {//老记录则传cancel=1为点赞,-1为取消
+             communityMapper.updateCollect(id, ThreadLocalUserIdUtil.getCurrentId(), cancel);
+             communityMapper.collectPost(id,cancel);
+         }
+    }
 
-
+    @Override
+    public List<MyCollectVO> getCollect() {
+        try {
+            List<Integer> postIdList = communityMapper.getCollect(ThreadLocalUserIdUtil.getCurrentId());
+            return communityMapper.getPostListByPostId(postIdList);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
 }

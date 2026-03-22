@@ -5,6 +5,7 @@ import com.example.tea.entity.dto.Community.NewCommentDTO;
 import com.example.tea.entity.dto.Community.PostCreateDTO;
 import com.example.tea.entity.dto.Community.UpdateDTO;
 import com.example.tea.entity.pojo.PageResult;
+import com.example.tea.entity.vo.Community.MyCollectVO;
 import com.example.tea.entity.vo.Community.MyPostVO;
 import com.example.tea.entity.vo.Community.PostDetailVO;
 
@@ -36,4 +37,8 @@ public interface CommunityService {
     void switchLikeComment(Long id,Integer cancel);
 
     void switchLikePost(Long id,Integer cancel);
+
+    void switchCollect(Long id, Integer cancel);
+
+    List<MyCollectVO> getCollect();
 }

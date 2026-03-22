@@ -1,9 +1,10 @@
 package com.example.tea.mapper;
 
 import com.example.tea.entity.dto.Community.*;
-import com.example.tea.entity.pojo.Community.Comment;
+import com.example.tea.entity.pojo.Community.Collect;
 import com.example.tea.entity.pojo.Community.Like;
 import com.example.tea.entity.pojo.Community.Post;
+import com.example.tea.entity.vo.Community.MyCollectVO;
 import com.example.tea.entity.vo.Community.MyPostVO;
 import com.example.tea.entity.vo.Community.PostListPageVO;
 import com.github.pagehelper.Page;
@@ -52,6 +53,9 @@ public interface CommunityMapper {
     @Update("UPDATE t_post SET comment_count = comment_count + 1 where id=#{postId}")
     void addCommentNum(Long postId);
 
+    @Update("UPDATE t_post SET collect_count = collect_count + #{cancel} where id=#{id} ")
+    void collectPost(Long id,Integer cancel);
+
     @Update("UPDATE t_comment SET like_count = like_count + #{cancel} where id=#{id} ")
     void likeComment(Long id,Integer cancel);
 
@@ -67,4 +71,19 @@ public interface CommunityMapper {
 
     @Update("update t_post set image =#{filePath} where id=#{postId}")
     void addImage(String filePath, Long postId);
+
+    @Select("select * from collect_record where user_id= #{currentId} and post_id= #{id}")
+    Collect checkCollect(Long id, Long currentId);
+
+    @Insert("insert into collect_record(user_id, post_id, is_cancel, create_time) values (#{userId},#{postId},#{isCancel},#{createTime})")
+    void addCollect(Collect build);
+
+
+    @Update("update collect_record set is_cancel = #{cancel} ,create_time = now() where post_id= #{id} and user_id= #{currentId}")
+    void updateCollect(Long id, Long currentId, Integer cancel);
+
+    @Select("select post_id from collect_record where user_id= #{currentId} and is_cancel = 1")
+    List<Integer> getCollect(Long currentId);
+
+    List<MyCollectVO> getPostListByPostId(List<Integer> list);
 }

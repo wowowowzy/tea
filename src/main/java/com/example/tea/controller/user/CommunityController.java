@@ -145,4 +145,27 @@ public class CommunityController {
         communityService.switchLikePost(id,cancel);
         return Result.success();
     }
+    /**
+     * 收藏文章(cancel=1为收藏，-1为取消)
+     * @param id
+     * @return
+     */
+    @PostMapping("/switchCollect")
+    public Result switchCollect(@RequestParam(value = "postId") Long id,
+                                 @RequestParam(value = "cancel",required = false,defaultValue = "1")Integer cancel){
+        communityService.switchCollect(id,cancel);
+        return Result.success();
+    }
+    /**
+     * 获取收藏文章
+     * @return
+     */
+    @GetMapping("/getCollect")
+    public Result getCollect(){
+        try {
+            return Result.success(communityService.getCollect());
+        } catch (Exception e) {
+            return Result.error("暂无收藏");
+        }
+    }
 }
