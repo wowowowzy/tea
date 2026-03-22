@@ -36,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
     private GoodsMapper goodsMapper;
     private final Snowflake snowflake = IdUtil.getSnowflake();
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void pay(List<OrderPayDTO> payDTOList, Long couponId) throws Exception {
         Long orderId = snowflake.nextId();
         Long userId = ThreadLocalUserIdUtil.getCurrentId();

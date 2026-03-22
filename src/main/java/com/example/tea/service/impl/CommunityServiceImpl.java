@@ -33,6 +33,7 @@ public class CommunityServiceImpl implements CommunityService {
      * 发布新帖子
      */
     @Override
+    @Transactional
     public void createPost(PostCreateDTO dto) {
         if (!SensitiveWordHelper.contains(dto.getContent())
         &&!SensitiveWordHelper.contains(dto.getTitle())) {
@@ -88,6 +89,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
+    @Transactional
     public void updateMyPost(UpdateDTO updateMyPost) {
         if (!SensitiveWordHelper.contains(updateMyPost.getContent())
                 &&!SensitiveWordHelper.contains(updateMyPost.getTitle())) {
