@@ -23,7 +23,7 @@ public class UploadController {
     private CommunityMapper communityMapper;
 
     /**
-     * 文件上传
+     * 头像上传
      * @param file
      * @return
      */
@@ -41,6 +41,10 @@ public class UploadController {
         }
     }
 
+    /**
+     * 更新帖子图片
+     * @return
+     */
     @PostMapping("/uploadPostImage")
     public Result upload(MultipartFile file,Long postId){
         try {

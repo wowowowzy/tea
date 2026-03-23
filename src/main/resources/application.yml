@@ -36,8 +36,14 @@ spring:
       base-url: https://yinli.one/v1
       chat:
         options:
-          model: deepseek-chat
+          model: deepseek-v3.2
         api-key: sk-vir53o4YsOrBdAXZb236q1MwK16k0xy6nKLPVBtTSjc3uFxO
+  rabbitmq:
+    host: 192.168.186.128
+    port: 5672
+    username: admin
+    password: 123456
+    virtual-host: /
 
 
 jwt:

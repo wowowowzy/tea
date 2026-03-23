@@ -71,7 +71,6 @@ public class CommunityController {
 
     /**
      * 修改帖子
-     *
      * @return
      */
     @PutMapping("updateMyPost")
@@ -86,7 +85,6 @@ public class CommunityController {
 
     /**
      * 删除帖子
-     *
      * @return
      */
     @DeleteMapping("/deleteMyPost")
