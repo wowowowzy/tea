@@ -33,14 +33,15 @@ public class CommunityServiceImpl implements CommunityService {
      */
     @Override
     @Transactional
-    public void createPost(PostCreateDTO dto) {
+    public Long createPost(PostCreateDTO dto) {
         if (!SensitiveWordHelper.contains(dto.getContent())
         &&!SensitiveWordHelper.contains(dto.getTitle())) {
-            communityMapper.insert(Post.builder()
+            Long postId = communityMapper.insert(Post.builder()
                     .title(dto.getTitle())
                     .content(dto.getContent())
                     .userId(ThreadLocalUserIdUtil.getCurrentId())
                     .build());
+            return postId;
         }else {
             String word = new StringBuffer().append(SensitiveWordHelper.findAll(dto.getTitle()))
                     .append(SensitiveWordHelper.findAll(dto.getContent()))

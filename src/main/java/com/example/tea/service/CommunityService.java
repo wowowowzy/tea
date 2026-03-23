@@ -15,7 +15,7 @@ public interface CommunityService {
     /**
      * 发布新帖子
      */
-    void createPost(PostCreateDTO dto);
+    Long createPost(PostCreateDTO dto);
 
     /**
      * 查询帖子详情

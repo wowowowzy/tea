@@ -27,8 +27,8 @@ public class CommunityController {
     @PostMapping("createPost")
     public Result createPost(@RequestBody PostCreateDTO dto) {
         try {
-            communityService.createPost(dto);
-            return Result.success("发布成功");
+            Long postId = communityService.createPost(dto);
+            return Result.success("发布成功postId="+postId);
         } catch (Exception e) {
             return Result.error("发布失败：" + e.getMessage());
         }

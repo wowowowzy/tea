@@ -20,7 +20,7 @@ public interface CommunityMapper {
     /**
      * 新增帖子
      */
-    int insert(Post post);
+    Long insert(Post post);
 
     /**
      * 根据ID查询帖子
