@@ -133,6 +133,7 @@
             <artifactId>sensitive-word</artifactId>
             <version>0.6.0</version> <!-- 建议用最新版本 -->
         </dependency>
+
     </dependencies>
     <dependencyManagement>
         <dependencies>
