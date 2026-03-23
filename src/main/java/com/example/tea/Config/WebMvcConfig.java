@@ -24,7 +24,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/api/user/login/**",
                         "/api/user/findAllGoods/**",
                         "/api/user/findGoodById/**",
-                        "/api/user/captcha/**"
+                        "/api/user/captcha/**",
+                        "/api/user/community/getPostDetail",
+                        "/api/user/community/getPostList"
+
                 );
 
         // 2. 注册管理员拦截器（后执行，仅拦截后台管理接口）

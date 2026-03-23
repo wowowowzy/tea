@@ -27,7 +27,7 @@ public interface CommunityMapper {
      */
     PostWithUsernameDTO selectById(Long postId);
 
-    @Select("select t.*,u.username from t_comment t left join sys_user u on t.user_id = u.id where post_id = #{postId}")
+    @Select("select t.*,u.username,u.avatar as userImage from t_comment t left join sys_user u on t.user_id = u.id where post_id = #{postId}")
     List<CommentDTO> getCommentByPostId(Long postId);
 
     /**

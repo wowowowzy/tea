@@ -51,11 +51,11 @@ public class ChatController {
                         .userId(userId)
                 .build());
         List<History> hisories = chatMapper.getHisories(sessionId);
-        List<Message> MessageList = hisories.stream().map(history -> history.getRole().equals("user") ? new UserMessage(history.getContent())
+        List<Message> historyMessageList = hisories.stream().map(history -> history.getRole().equals("user") ? new UserMessage(history.getContent())
                 : new AssistantMessage(history.getContent())).collect(Collectors.toList());
         StringBuilder[] strBuilder = {new StringBuilder()};
         Flux<String> stream = chatClient.prompt(new Prompt().getPrompt())
-                .user(message).messages(MessageList).stream().content();
+                .user(message).messages(historyMessageList).stream().content();
         Long finalSessionId = sessionId;
         return stream.doOnNext(s -> strBuilder[0].append(s)).doOnComplete( ()-> chatMapper.add(History.builder()
                 .datetime(LocalDateTime.now())

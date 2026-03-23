@@ -14,6 +14,5 @@ public class CommentDTO {
     private Long toUserId;
     private Integer likeCount;
     private Long postId;
-
-
+    private String userImage;
 }
