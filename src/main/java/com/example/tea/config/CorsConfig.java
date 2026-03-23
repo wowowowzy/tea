@@ -1,4 +1,4 @@
-package com.example.tea.Config;
+package com.example.tea.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

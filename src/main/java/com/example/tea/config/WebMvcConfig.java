@@ -1,4 +1,4 @@
-package com.example.tea.Config;
+package com.example.tea.config;
 
 import com.example.tea.interceptor.AdminInterceptor;
 import com.example.tea.interceptor.UserInterceptor;

@@ -4,6 +4,7 @@ import com.example.tea.entity.pojo.Coupon.Coupon;
 import com.example.tea.entity.vo.Coupon.CouponVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -27,4 +28,8 @@ public interface CouponMapper {
 
     void updateExpiredCoupon(List<Coupon> coupons);
 
+    @Select("select  * from coupon where status = 1 and end_time < NOW() and id =#{couponId}")
+    Coupon getExpiredCouponById(Long couponId);
+    @Update("update coupon set status = #{status},use_time = now(),update_time = now() where id = #{id}")
+    void updateAnExpiredCoupon(Coupon coupon);
 }

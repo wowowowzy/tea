@@ -1,4 +1,4 @@
-package com.example.tea.Config;
+package com.example.tea.config;
 
 import com.example.tea.entity.pojo.AliOssProperties;
 import com.example.tea.utils.AliOssUtil;

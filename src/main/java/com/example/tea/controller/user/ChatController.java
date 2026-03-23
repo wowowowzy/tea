@@ -32,10 +32,11 @@ public class ChatController {
     @Autowired
     private ChatMapper chatMapper;
 
-    /**
-     * 核心ai接口
+    /**核心ai接口
+     *
      * @param message
      * @param sessionId
+     * @param image
      * @return
      */
     @PostMapping( "/generateStream")

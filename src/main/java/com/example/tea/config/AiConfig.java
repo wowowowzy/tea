@@ -1,4 +1,4 @@
-package com.example.tea.Config;
+package com.example.tea.config;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.openai.OpenAiChatModel;

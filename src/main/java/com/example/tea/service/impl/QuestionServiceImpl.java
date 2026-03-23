@@ -7,6 +7,7 @@ import com.example.tea.entity.vo.Question.AnswerQuestionVO;
 import com.example.tea.entity.vo.Question.QuestionVO;
 import com.example.tea.mapper.CouponMapper;
 import com.example.tea.mapper.QuestionMapper;
+import com.example.tea.rabbitmq.producer.CouponDelayProducer;
 import com.example.tea.service.QuestionService;
 import com.example.tea.utils.ThreadLocalUserIdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ public class QuestionServiceImpl implements QuestionService {
     private QuestionMapper questionMapper;
     @Autowired
     private CouponMapper couponMapper;
+    @Autowired
+    private CouponDelayProducer couponDelayProducer;
     @Override
     public List<QuestionVO> getQuestion() {
         Integer scope = questionMapper.queryQuestionScope();//查询当前questionId的最大值方便分配id
@@ -68,7 +71,7 @@ public class QuestionServiceImpl implements QuestionService {
         if(userOptions.size()-wrong.size()>=2){
             //检验是否有未过期优惠卷
             if (couponMapper.getUnusedCoupon(ThreadLocalUserIdUtil.getCurrentId()).size()==0) {
-                couponMapper.insertQuestionCoupon(Coupon.builder()
+                Coupon coupon = Coupon.builder()
                         .userId(ThreadLocalUserIdUtil.getCurrentId())
                         .intro("满200-50全场通用")
                         .reduceAmount(BigDecimal.valueOf(50))
@@ -78,8 +81,9 @@ public class QuestionServiceImpl implements QuestionService {
                         .status(Coupon.STATUS_UNUSED)
                         .createTime(LocalDateTime.now())
                         .updateTime(LocalDateTime.now())
-                        .build()
-                );
+                        .build();
+                couponMapper.insertQuestionCoupon(coupon);
+                couponDelayProducer.sendDelayCouponMessage(coupon.getId(), 1000 * 60 * 60 * 24);
                 return AnswerQuestionVO.builder()
                         .msg(new StringBuffer().append("回答正确").append(userOptions.size()-wrong.size()).append("道题目").append("!获得的满200-50全场通用卷已经发放到您的账户").toString())
                         .answerList(answer)

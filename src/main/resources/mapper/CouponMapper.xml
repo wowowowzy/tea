@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.example.tea.mapper.CouponMapper">
-    <insert id="insertQuestionCoupon">
+    <insert id="insertQuestionCoupon" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO coupon (
             user_id,
             intro,
