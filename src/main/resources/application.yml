@@ -24,6 +24,10 @@ spring:
     redis:
       key-prefix: "hot_data:"  # 缓存key前缀：hot_data:xxx
       use-key-prefix: true  # 启用前缀
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
 
   datasource:
     url: jdbc:mysql://localhost:3306/book?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
@@ -32,12 +36,12 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
   ai:
-    deepseek:
-      base-url: https://yinli.one/v1
+    openai:
+      api-key:  sk-wdslhTremLtvNFzpfotxXXMhOiB9yU0VA4DY6iQW1wf7SiYX #稳定分组key sk-vir53o4YsOrBdAXZb236q1MwK16k0xy6nKLPVBtTSjc3uFxO
+      base-url: https://yinli.one
       chat:
         options:
-          model: deepseek-v3.2
-        api-key: sk-vir53o4YsOrBdAXZb236q1MwK16k0xy6nKLPVBtTSjc3uFxO
+          model: gpt-4o-mini
   rabbitmq:
     host: 192.168.186.128
     port: 5672

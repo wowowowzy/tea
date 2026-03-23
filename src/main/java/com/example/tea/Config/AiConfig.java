@@ -1,14 +1,15 @@
 package com.example.tea.Config;
 
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.deepseek.DeepSeekChatModel;
+import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AiConfig {
     @Bean
-    public ChatClient chatClient(DeepSeekChatModel deepSeekChatModel){
-        return ChatClient.builder(deepSeekChatModel).build();
+    public ChatClient chatClient(OpenAiChatModel openAiChatModel){
+        return ChatClient.builder(openAiChatModel).build();
     }
+
 }
