@@ -29,4 +29,5 @@ public class PostWithUsernameDTO {
     private String username;
     private String image;
     private Integer status;
+    private String userImage;
 }

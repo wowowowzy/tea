@@ -20,4 +20,5 @@ public class PostListPageVO {
     private Long userId;
     private String username;
     private String image;
+    private String userImage;
 }

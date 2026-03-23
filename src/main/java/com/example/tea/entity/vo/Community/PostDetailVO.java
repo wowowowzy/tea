@@ -33,4 +33,5 @@ public class PostDetailVO {
     /** 创建时间 */
     private LocalDateTime createTime;
     private String image;
+    private String userImage;
 }

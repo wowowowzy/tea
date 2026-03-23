@@ -2,7 +2,6 @@ package com.example.tea.service.impl;
 
 import com.example.tea.entity.dto.Community.*;
 import com.example.tea.entity.pojo.Community.Collect;
-import com.example.tea.entity.pojo.Community.Comment;
 import com.example.tea.entity.pojo.Community.Like;
 import com.example.tea.entity.pojo.Community.Post;
 import com.example.tea.entity.pojo.PageResult;
