@@ -5,10 +5,11 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CommunityQueryDTO {
+public class CommunityQueryWithUserIdDTO {
     private Integer page;
 
     private Integer pageSize;
 
     private String name;
+    private Long userId;
 }

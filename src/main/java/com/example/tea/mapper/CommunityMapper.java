@@ -35,7 +35,7 @@ public interface CommunityMapper {
      */
     Long selectPostTotal();
 
-    Page<PostListPageVO> getPostList(CommunityQueryDTO dto);
+    Page<PostListPageVO> getPostList(CommunityQueryWithUserIdDTO build);
 
     List<MyPostVO> getMyPost(Long userId);
 

@@ -3,8 +3,6 @@ package com.example.tea.entity.dto.Address;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
 public class AddressDTO {

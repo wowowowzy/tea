@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CommunityServiceImpl implements CommunityService {
@@ -68,8 +69,17 @@ public class CommunityServiceImpl implements CommunityService {
         detailVO.setPostId(post.getId());
         detailVO.setCommentDTOS(comments);
         isCancelDTO isCancel = communityMapper.getCancel(ThreadLocalUserIdUtil.getCurrentId(),postId);
-        detailVO.setLikeCancel(isCancel.getLikeCancel());
-        detailVO.setCollectCancel(isCancel.getCollectCancel());
+        detailVO.setLikeCancel(
+                Optional.ofNullable(isCancel)
+                        .map(isCancelDTO::getLikeCancel)
+                        .orElse(-1)
+        );
+
+        detailVO.setCollectCancel(
+                Optional.ofNullable(isCancel)
+                        .map(isCancelDTO::getCollectCancel)
+                        .orElse(-1)
+        );
         return detailVO;
     }
 
@@ -79,8 +89,10 @@ public class CommunityServiceImpl implements CommunityService {
                 dto.getPage()==null ? 1 : dto.getPage(),
                 dto.getPageSize()==null ? 10 : dto.getPageSize()
         );
-        dto.setUserId(ThreadLocalUserIdUtil.getCurrentId());
-        Page<PostListPageVO> page = communityMapper.getPostList(dto);
+        CommunityQueryWithUserIdDTO build = CommunityQueryWithUserIdDTO
+                .builder().userId(ThreadLocalUserIdUtil.getCurrentId()).build();
+        BeanUtils.copyProperties(dto,build);
+        Page<PostListPageVO> page = communityMapper.getPostList(build);
         return PageResult.builder()
                 .total(page.getTotal())
                 .records(page.getResult())
