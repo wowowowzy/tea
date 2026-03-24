@@ -2,7 +2,44 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.example.tea.mapper.GoodsMapper">
-    <select id="findAllGoods" resultType="com.example.tea.entity.dto.Goods.GoodsDTO">
+    <insert id="insert">
+        INSERT INTO goods (
+            goods_name,
+            goods_intro,
+            goods_price,
+            category_id,
+            stock_num,
+            goods_image,
+            create_time,
+            update_time
+        ) VALUES (
+                     #{goodsName},
+                     #{goodsIntro},
+                     #{goodsPrice},
+                     #{categoryId},
+                     #{stockNum},
+                     #{goodsImage},
+                     NOW(),
+                     NOW()
+                 )
+    </insert>
+    <update id="updateById">
+        UPDATE goods
+        SET
+            goods_name = #{goodsName},
+            goods_intro = #{goodsIntro},
+            goods_price = #{goodsPrice},
+            category_id = #{categoryId},
+            stock_num = #{stockNum},
+            goods_image = #{goodsImage},
+            update_time = NOW()
+        WHERE goods_id = #{goodsId}
+    </update>
+    <delete id="deleteById">
+        DELETE FROM goods
+        WHERE goods_id = #{goodsId}
+    </delete>
+    <select id="findAllGoods" resultType="com.example.tea.entity.dto.Goods.GoodsInsertDTO">
         select goods_id,goods_name,goods_price,goods_image from goods
         <where>
             <if test="categoryId!=null">and category_id=#{categoryId}</if>
@@ -16,6 +53,15 @@
         <foreach collection="payDTOList" open="(" close=")" separator="," item="dto">
             #{dto.goodsId}
         </foreach>
+    </select>
+    <select id="findAllGoodsAdmin" resultType="com.example.tea.entity.pojo.Goods.Goods">
+        select * from goods
+        <where>
+            <if test="categoryId!=null">and category_id=#{categoryId}</if>
+            <if test="goodsName!=null and goodsName!=''">
+                and goods_name like concat('%',#{goodsName},'%')
+            </if>
+        </where>
     </select>
 
 </mapper>

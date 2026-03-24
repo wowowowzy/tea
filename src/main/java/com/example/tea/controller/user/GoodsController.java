@@ -31,7 +31,7 @@ public class GoodsController {
      */
     @GetMapping("/findGoodById")
     public Result findGoodById(Long goodsId){
-        return goodsService.findGoodById(goodsId);
+        return Result.success(goodsService.findGoodById(goodsId));
     }
 
 }

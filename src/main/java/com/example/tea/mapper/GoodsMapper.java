@@ -1,23 +1,34 @@
 package com.example.tea.mapper;
 
-import com.example.tea.entity.dto.Goods.GoodsDTO;
+import com.example.tea.entity.dto.Goods.GoodsInsertDTO;
 import com.example.tea.entity.dto.Goods.GoodsQueryDTO;
 import com.example.tea.entity.dto.Order.OrderAndGoodsDTO;
 import com.example.tea.entity.dto.Order.OrderPayDTO;
+import com.example.tea.entity.pojo.Goods.Goods;
 import com.example.tea.entity.vo.Goods.GoodsVO;
 import com.github.pagehelper.Page;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
 public interface GoodsMapper {
-    Page<GoodsDTO> findAllGoods(GoodsQueryDTO goodsQueryDTO);
+    Page<GoodsInsertDTO> findAllGoods(GoodsQueryDTO goodsQueryDTO);
 
     @Select("select * from goods where goods_id=#{goodsId}")
     GoodsVO findGoodById(Long goodsId);
 
     List<OrderAndGoodsDTO> getTotalPrice(List<OrderPayDTO> payDTOList);
+
+    void insert(GoodsInsertDTO dto);
+
+    void updateById(Goods goods);
+
+    void deleteById(Long goodsId);
+
+    Page<Goods> findAllGoodsAdmin(GoodsQueryDTO goodsQueryDTO);
+
+    @Select("select * from goods where goods_id=#{goodsId}")
+    Goods findGoodByIdAdmin(Long goodsId);
 }
