@@ -35,7 +35,7 @@ public class AdminInterceptor implements HandlerInterceptor {
             }else return false;
 
         }else {
-            response.getWriter().write("未登录，请先登录");
+            response.getWriter().write("不是管理员用户");
             response.setStatus(401);
         }
             return false;
