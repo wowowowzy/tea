@@ -2,6 +2,8 @@ package com.example.tea.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
+import com.example.tea.config.RabbitMQseckillConfig;
+import com.example.tea.entity.dto.Goods.SeckillGoodsMessageDTO;
 import com.example.tea.entity.dto.Order.OrderAndGoodsDTO;
 import com.example.tea.entity.dto.Order.OrderDTO;
 import com.example.tea.entity.dto.Order.OrderListDTO;
@@ -9,12 +11,14 @@ import com.example.tea.entity.dto.Order.OrderPayDTO;
 import com.example.tea.entity.pojo.Coupon.Coupon;
 import com.example.tea.entity.pojo.Order.Order;
 import com.example.tea.entity.pojo.Order.OrderDetail;
+import com.example.tea.entity.vo.Goods.GoodsVO;
 import com.example.tea.entity.vo.Order.OrderListVO;
 import com.example.tea.mapper.CouponMapper;
 import com.example.tea.mapper.GoodsMapper;
 import com.example.tea.mapper.OrderMapper;
 import com.example.tea.service.OrderService;
 import com.example.tea.utils.ThreadLocalUserIdUtil;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -143,5 +148,31 @@ public class OrderServiceImpl implements OrderService {
                 .couponId(orders.get(0).getCouponId())
                 .orderDTOList(list)
                 .build();
+    }
+
+    @RabbitListener(queues = RabbitMQseckillConfig.SECKILL_QUEUE)
+    public void handleSeckillMessage(SeckillGoodsMessageDTO message) {
+        Long goodsId = message.getGoodsId();
+        Long userId = message.getUserId();
+        Long orderId = snowflake.nextId();
+        Order order = Order.builder()
+                .userId(userId)
+                .goodsId(Math.toIntExact(goodsId))
+                .orderId(orderId)
+                .quantity(1)
+                .createTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now()).build();
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(order);
+        orderMapper.pay(orderList);
+        BigDecimal goodsPrice = goodsMapper.findGoodById(goodsId).getGoodsPrice();
+        OrderDetail orderDetail = OrderDetail.builder()
+                .orderId(String.valueOf(orderId))
+                .userId(userId)
+                .totalPrice(goodsPrice)
+                .createTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now())
+                .build();
+        orderMapper.insertDetail(orderDetail);
     }
 }

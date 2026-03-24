@@ -30,7 +30,7 @@ public class AdminInterceptor implements HandlerInterceptor {
         if (jwtUtil.validateToken(token)){
             //解析token查出userId然后查remark
             String remark = userMapper.checkAdmin(jwtUtil.getUserIdFromToken(token));
-            if (remark=="admin"){
+            if (remark.equals("admin")){
                 return true;
             }else return false;
 
