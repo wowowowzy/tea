@@ -41,11 +41,9 @@ public class SeckillServiceImpl implements SeckillService {
         Long remainStock = redisTemplate.opsForValue().decrement(stockKey);
 
         // 4. 库存不足
-        if (remainStock == null || remainStock < 0) {
+        if (remainStock < 0) {
             // 把多减的 1 加回去
-            if (remainStock != null) {
-                redisTemplate.opsForValue().increment(stockKey);
-            }
+            redisTemplate.opsForValue().increment(stockKey);
             return "已抢完";
         }
 
