@@ -11,6 +11,8 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +52,7 @@ public class GoodsServiceImpl implements GoodsService {
 
     // 修改
     @Override
+    @CachePut(value = "goods", key = "#goodsId")
     public void updateGoods(Long goodsId,GoodsInsertDTO dto) {
         Goods goods = new Goods();
         BeanUtils.copyProperties(dto, goods);
@@ -59,6 +62,7 @@ public class GoodsServiceImpl implements GoodsService {
 
     // 物理删除
     @Override
+    @CacheEvict(value = "goods", key = "#goodsId")
     public void deleteGoods(Long goodsId) {
         goodsMapper.deleteById(goodsId);
     }
