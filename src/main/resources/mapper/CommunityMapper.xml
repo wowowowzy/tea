@@ -50,12 +50,29 @@
 
 
     <select id="getPostList" resultType="com.example.tea.entity.vo.Community.PostListPageVO">
-        select t.title,t.content,t.like_count,
-               t.collect_count,t.comment_count,t.id as postId ,u.id as userId,u.username,t.image,u.avatar as userImage
-        from t_post t left join sys_user u on u.id =t.user_id
+        select
+        t.title,
+        t.content,
+        t.like_count,
+        t.collect_count,
+        t.comment_count,
+        t.id as postId,
+        u.id as userId,
+        u.username,
+        t.image,
+        u.avatar as userImage,
+        IFNULL(l.is_cancel, -1) as likeCancel,
+        IFNULL(c.is_cancel, -1) as collectCancel
+        from t_post t
+        left join sys_user u on u.id = t.user_id
+        left join like_record l on t.id = l.target_id and l.target_type = 1 and l.user_id = #{userId}
+        left join collect_record c on c.post_id = t.id and c.user_id = #{userId}
         <where>
-            <if test="name!=null and name!=''">t.title like concat('%',#{name},'%')</if>
+            <if test="name!=null and name!=''">
+                and t.title like concat('%',#{name},'%')
+            </if>
         </where>
+        order by t.create_time desc
     </select>
     <select id="getMyPost" resultType="com.example.tea.entity.vo.Community.MyPostVO">
         select title,content,like_count,comment_count,collect_count,id,image from t_post
@@ -90,6 +107,14 @@
             <foreach collection="list" item="num" open="(" close=")" separator=",">
                 #{num}
             </foreach>
+    </select>
+    <select id="getCancel" resultType="com.example.tea.entity.dto.Community.isCancelDTO">
+        select l.is_cancel as likeCancel,c.is_cancel as collectCancel
+        from like_record l left join collect_record c
+            on l.user_id = c.user_id and l.target_id = c.post_id
+        where l.user_id = #{currentId}
+        and l.target_id = #{postId}
+        and l.target_type = 1
     </select>
 
 

@@ -21,4 +21,6 @@ public class PostListPageVO {
     private String username;
     private String image;
     private String userImage;
+    private Integer likeCancel;
+    private Integer collectCancel;
 }

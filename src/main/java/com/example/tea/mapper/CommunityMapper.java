@@ -86,4 +86,7 @@ public interface CommunityMapper {
     List<Integer> getCollect(Long currentId);
 
     List<MyCollectVO> getPostListByPostId(List<Integer> list);
+
+
+    isCancelDTO getCancel(Long currentId, Long postId);
 }

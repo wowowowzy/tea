@@ -12,4 +12,5 @@ public class CommunityQueryDTO {
 
     private String name;
 
+    private Long userId;
 }

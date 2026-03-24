@@ -34,4 +34,6 @@ public class PostDetailVO {
     private LocalDateTime createTime;
     private String image;
     private String userImage;
+    private Integer likeCancel;
+    private Integer collectCancel;
 }

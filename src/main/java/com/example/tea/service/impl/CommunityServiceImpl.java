@@ -67,6 +67,9 @@ public class CommunityServiceImpl implements CommunityService {
         BeanUtils.copyProperties(post,detailVO);
         detailVO.setPostId(post.getId());
         detailVO.setCommentDTOS(comments);
+        isCancelDTO isCancel = communityMapper.getCancel(ThreadLocalUserIdUtil.getCurrentId(),postId);
+        detailVO.setLikeCancel(isCancel.getLikeCancel());
+        detailVO.setCollectCancel(isCancel.getCollectCancel());
         return detailVO;
     }
 
@@ -76,6 +79,7 @@ public class CommunityServiceImpl implements CommunityService {
                 dto.getPage()==null ? 1 : dto.getPage(),
                 dto.getPageSize()==null ? 10 : dto.getPageSize()
         );
+        dto.setUserId(ThreadLocalUserIdUtil.getCurrentId());
         Page<PostListPageVO> page = communityMapper.getPostList(dto);
         return PageResult.builder()
                 .total(page.getTotal())
