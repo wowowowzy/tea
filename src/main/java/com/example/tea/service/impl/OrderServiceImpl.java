@@ -54,6 +54,12 @@ public class OrderServiceImpl implements OrderService {
                 .updateTime(LocalDateTime.now()).build()).toList();
         orderMapper.pay(orderList);
 
+        //减库存
+        Integer updateStock = goodsMapper.updateStock(payDTOList);
+        if (updateStock != payDTOList.size()){
+            throw new Exception("部分商品库存不足，请重新下单");
+        }
+
         // 计算总价
         List<OrderAndGoodsDTO> list = goodsMapper.getTotalPrice(payDTOList);
         BigDecimal total = BigDecimal.valueOf(0);
@@ -76,10 +82,10 @@ public class OrderServiceImpl implements OrderService {
             BigDecimal minAmount = coupon.getMinAmount();
             BigDecimal reduceAmount = coupon.getReduceAmount();
             if (!Coupon.vaildate(coupon)) { // 修复逻辑：校验失败直接抛异常
-                throw new Exception("优惠券无效（已过期/已使用）");
+                throw new Exception("优惠券使用失败：优惠券无效（已过期/已使用）");
             }
             if (total.compareTo(minAmount) < 0) { // 金额不足抛异常
-                throw new Exception("订单金额未达到优惠券使用门槛");
+                throw new Exception("优惠券使用失败：订单金额未达到优惠券使用门槛");
             }
             // 抵扣优惠券
             total = total.subtract(reduceAmount);

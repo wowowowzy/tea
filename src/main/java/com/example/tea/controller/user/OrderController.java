@@ -27,7 +27,7 @@ public class OrderController {
             orderService.pay(list, couponId);
             return Result.success();
         } catch (Exception e) {
-            return Result.error("优惠券使用失败：" + e.getMessage());
+            return Result.error(e.getMessage());
         }
     }
 

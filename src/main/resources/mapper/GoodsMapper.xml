@@ -35,6 +35,16 @@
             update_time = NOW()
         WHERE goods_id = #{goodsId}
     </update>
+    <update id="updateStock">
+        <foreach collection="list" item="item" separator=";">
+            UPDATE goods
+            SET stock_num = stock_num - #{item.quantity},
+            update_time = NOW()
+            WHERE goods_id = #{item.goodsId}
+            AND stock_num >= #{item.quantity}
+        </foreach>
+    </update>
+
     <delete id="deleteById">
         DELETE FROM goods
         WHERE goods_id = #{goodsId}
