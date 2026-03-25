@@ -2,8 +2,11 @@ package com.example.tea.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
+import com.example.tea.entity.dto.Goods.GoodsInsertDTO;
 import com.example.tea.entity.dto.User.LoginInfo;
 import com.example.tea.entity.dto.User.RegisterInfo;
+import com.example.tea.entity.dto.User.UserQueryDTO;
+import com.example.tea.entity.pojo.PageResult;
 import com.example.tea.entity.pojo.Result;
 import com.example.tea.entity.pojo.User.User;
 import com.example.tea.entity.vo.User.LoginVO;
@@ -12,6 +15,8 @@ import com.example.tea.mapper.UserMapper;
 import com.example.tea.service.UserService;
 import com.example.tea.utils.JwtUtil;
 import com.example.tea.utils.ThreadLocalUserIdUtil;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,6 +42,11 @@ public class UserServiceImpl implements UserService {
                     .state(0)
                     .reason("用户未注册")
                     .build(); // 直接返回“未注册”提示
+        }else if (!user.getStatus().equals(1)){
+            return LoginVO.builder()
+                    .state(0)
+                    .reason("用户被禁用")
+                    .build();
         }
 
         boolean matches = bCryptPasswordEncoder.matches(loginInfo.getPassword(), user.getPassword());
@@ -96,5 +106,53 @@ public class UserServiceImpl implements UserService {
             throw new Exception();
         }
         return userVO;
+    }
+
+    @Override
+    public LoginVO loginAdmin(LoginInfo loginInfo) {
+        User user = userMapper.login(loginInfo.getUsername());
+
+        if (user == null) {
+            return LoginVO.builder()
+                    .state(0)
+                    .reason("用户未注册")
+                    .build(); // 直接返回“未注册”提示
+        }else if (!user.getRemark().equalsIgnoreCase("admin")){
+            return LoginVO.builder()
+                    .state(0)
+                    .reason("不是管理员")
+                    .build();
+        }
+
+        boolean matches = bCryptPasswordEncoder.matches(loginInfo.getPassword(), user.getPassword());
+        if(matches){
+            return LoginVO.builder()
+                    .userId(user.getId())
+                    .username(user.getUsername())
+                    .token(jwtUtil.generateTokenAdmin(user.getId()))
+                    .state(1)
+                    .avatar(user.getAvatar())
+                    .sessionId(snowflake.nextId())
+                    .build();
+        }else return LoginVO.builder().state(0).reason("密码错误").build();
+    }
+
+    @Override
+    public PageResult showUserAdmin(UserQueryDTO dto) {
+        PageHelper.startPage(
+                dto.getPage()==null ? 1 : dto.getPage(),
+                dto.getPageSize()==null ? 10 : dto.getPageSize()
+        );
+        Page<User> page =userMapper.getUserList(dto);
+        return PageResult.builder()
+                .total(page.getTotal())
+                .records(page.getResult())
+                .build();
+    }
+
+    @Override
+    public Result banUser(Long userId) {
+        userMapper.banUser(userId);
+        return Result.success();
     }
 }

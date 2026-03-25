@@ -1,7 +1,6 @@
 package com.example.tea.interceptor;
 
 
-import com.example.tea.mapper.UserMapper;
 import com.example.tea.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,8 +13,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class AdminInterceptor implements HandlerInterceptor {
     @Autowired
     private JwtUtil jwtUtil;
-    @Autowired
-    private UserMapper userMapper;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -27,18 +24,14 @@ public class AdminInterceptor implements HandlerInterceptor {
             response.getWriter().write("未登录，请先登录");
             return false; // 返回false：拦截请求，不执行后续接口逻辑
         }
-        if (jwtUtil.validateToken(token)){
-            //解析token查出userId然后查remark
-            String remark = userMapper.checkAdmin(jwtUtil.getUserIdFromToken(token));
-            if (remark.equals("admin")){
-                return true;
-            }else return false;
-
+            if (jwtUtil.validateAdminToken(token)){
+            return true;
         }else {
             response.getWriter().write("不是管理员用户");
             response.setStatus(401);
-        }
             return false;
+        }
+
     }
 
 }

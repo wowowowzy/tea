@@ -30,6 +30,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         // 2. 注册管理员拦截器（后执行，仅拦截后台管理接口）
         registry.addInterceptor(adminInterceptor)
-                .addPathPatterns("/api/admin/**"); // 仅拦截/admin开头的后台接口
+                .addPathPatterns("/api/admin/**")// 仅拦截/admin开头的后台接口
+                .excludePathPatterns(
+                        "/api/admin/user/login/**"
+                );
     }
 }
