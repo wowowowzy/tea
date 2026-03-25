@@ -1,5 +1,6 @@
 package com.example.tea.controller.admin;
 
+import com.example.tea.annotation.OperLog;
 import com.example.tea.entity.pojo.Result;
 import com.example.tea.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ public class OrderAdminController {
     /**
      * 审批订单
      */
+    @OperLog(module = "订单", type = "审批")
     @PostMapping("approval")
     public Result approval(Long orderId){
         orderService.approval(orderId);

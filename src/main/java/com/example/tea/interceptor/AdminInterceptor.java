@@ -2,6 +2,7 @@ package com.example.tea.interceptor;
 
 
 import com.example.tea.utils.JwtUtil;
+import com.example.tea.utils.ThreadLocalUserIdUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ public class AdminInterceptor implements HandlerInterceptor {
             return false; // 返回false：拦截请求，不执行后续接口逻辑
         }
             if (jwtUtil.validateAdminToken(token)){
+                ThreadLocalUserIdUtil.setCurrentId(jwtUtil.getUserIdFromToken(token));
             return true;
         }else {
             response.getWriter().write("不是管理员用户");
@@ -32,6 +34,11 @@ public class AdminInterceptor implements HandlerInterceptor {
             return false;
         }
 
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        ThreadLocalUserIdUtil.removeCurrentId();
     }
 
 }
