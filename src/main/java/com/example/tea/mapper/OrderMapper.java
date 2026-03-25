@@ -5,6 +5,7 @@ import com.example.tea.entity.pojo.Order.Order;
 import com.example.tea.entity.pojo.Order.OrderDetail;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -17,4 +18,9 @@ public interface OrderMapper {
     List<OrderDTO> getOrderById(Long orderId, Long userId);
 
     void insertDetail(OrderDetail orderDetail);
+
+    List<OrderDTO> getOrdersAdmin();
+
+    @Update("update `order` set status = 1 where id = #{orderId}")
+    void approval(Long orderId);
 }

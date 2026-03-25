@@ -41,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
     private GoodsMapper goodsMapper;
     private final Snowflake snowflake = IdUtil.getSnowflake();
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void pay(List<OrderPayDTO> payDTOList, Long couponId) throws Exception {
         Long orderId = snowflake.nextId();
         Long userId = ThreadLocalUserIdUtil.getCurrentId();
@@ -51,7 +51,9 @@ public class OrderServiceImpl implements OrderService {
                 .orderId(orderId)
                 .quantity(DTO.getQuantity())
                 .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now()).build()).toList();
+                .updateTime(LocalDateTime.now())
+                .status(0)
+                .build()).toList();
         orderMapper.pay(orderList);
 
         //减库存
@@ -134,7 +136,9 @@ public class OrderServiceImpl implements OrderService {
                     .createTime(createTime)
                     .couponId(couponId)
                     .totalPrice(totalPrice)
-                    .orderDTOList(list).build();
+                    .orderDTOList(list)
+                    .status(orderDTOS.get(0).getStatus())
+                    .build();
         }).toList();
     }
 
@@ -153,7 +157,42 @@ public class OrderServiceImpl implements OrderService {
                 .totalPrice(orders.get(0).getTotalPrice())
                 .couponId(orders.get(0).getCouponId())
                 .orderDTOList(list)
+                .status(orders.get(0).getStatus())
                 .build();
+    }
+
+    @Override
+    public List<OrderListVO> showApprovalList() {
+        List<OrderDTO> orders = orderMapper.getOrdersAdmin();
+        Map<Long, List<OrderDTO>> listMap = orders.stream()
+                .collect(Collectors.groupingBy(OrderDTO::getOrderId));
+        return listMap.entrySet().stream().map(entry -> {
+            Long orderId = entry.getKey();
+            List<OrderDTO> orderDTOS = entry.getValue();
+            LocalDateTime createTime = orderDTOS.get(0).getCreateTime();
+            Long couponId = orderDTOS.get(0).getCouponId();
+            BigDecimal totalPrice = orderDTOS.get(0).getTotalPrice();
+            List<OrderListDTO> list = orderDTOS.stream().map(orderDTO -> OrderListDTO.builder()
+                    .goodsName(orderDTO.getGoodsName())
+                    .goodsIntro(orderDTO.getGoodsIntro())
+                    .goodsPrice(orderDTO.getGoodsPrice())
+                    .quantity(orderDTO.getQuantity())
+                    .goodsImage(orderDTO.getGoodsImage()).build()
+            ).toList();
+            return OrderListVO.builder()
+                    .orderId(orderId)
+                    .createTime(createTime)
+                    .couponId(couponId)
+                    .totalPrice(totalPrice)
+                    .orderDTOList(list)
+                    .status(orderDTOS.get(0).getStatus())
+                    .build();
+        }).toList();
+    }
+
+    @Override
+    public void approval(Long orderId) {
+        orderMapper.approval(orderId);
     }
 
     @RabbitListener(queues = RabbitMQseckillConfig.SECKILL_QUEUE)

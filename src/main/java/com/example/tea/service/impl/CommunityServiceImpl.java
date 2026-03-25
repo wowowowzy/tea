@@ -33,7 +33,7 @@ public class CommunityServiceImpl implements CommunityService {
      * 发布新帖子
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Long createPost(PostCreateDTO dto) {
         if (!SensitiveWordHelper.contains(dto.getContent())
         &&!SensitiveWordHelper.contains(dto.getTitle())) {
@@ -106,7 +106,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateMyPost(UpdateDTO updateMyPost) {
         if (!SensitiveWordHelper.contains(updateMyPost.getContent())
                 &&!SensitiveWordHelper.contains(updateMyPost.getTitle())) {
@@ -128,7 +128,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void comment(NewCommentDTO newCommentDTO) {
         if(SensitiveWordHelper.contains(newCommentDTO.getContent())){
             String string = new StringBuilder().append("包含违禁词")
@@ -142,7 +142,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void deleteComment(Long id) {
         List<Long> integers = communityMapper.getAssociationComment(id);
         integers.add(id);
@@ -150,7 +150,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void switchLikeComment(Long commentId, Integer cancel) {
         //cancel=-1时为取消点赞
         //查看是否是新纪录
@@ -175,7 +175,7 @@ public class CommunityServiceImpl implements CommunityService {
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void switchLikePost(Long postId, Integer cancel) {
         //查看是否是新纪录
         Like like =  communityMapper.check(postId,Like.TYPE_POST,ThreadLocalUserIdUtil.getCurrentId());
@@ -197,7 +197,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void switchCollect(Long id, Integer cancel) {
         //查看是否是新纪录
          Collect collect = communityMapper.checkCollect(id,ThreadLocalUserIdUtil.getCurrentId());

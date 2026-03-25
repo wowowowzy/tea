@@ -20,4 +20,5 @@ public class OrderListVO {
     private BigDecimal totalPrice;
     private Long couponId;
     private List<OrderListDTO> orderDTOList;
+    private Integer status;
 }

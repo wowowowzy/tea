@@ -11,4 +11,8 @@ public interface OrderService {
    List<OrderListVO> getOrders();
 
     OrderListVO getOrderById(Long orderId);
+
+    List<OrderListVO> showApprovalList();
+
+    void approval(Long orderId);
 }

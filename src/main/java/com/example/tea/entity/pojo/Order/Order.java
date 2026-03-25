@@ -20,4 +20,5 @@ public class Order {
     private Integer quantity;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
+    private Integer status;
 }

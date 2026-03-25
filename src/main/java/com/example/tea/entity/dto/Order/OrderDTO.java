@@ -22,4 +22,5 @@ public class OrderDTO {
     private String goodsIntro;
     private Long couponId;
     private BigDecimal totalPrice;
+    private Integer status;
 }

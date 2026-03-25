@@ -7,7 +7,7 @@ import com.example.tea.service.GoodsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 /**
- * (Admin管理员)管理商品商品接口
+ * (Admin管理员)管理管理商品接口
  */
 @RestController
 @RequestMapping("/api/admin/goods")

@@ -25,7 +25,7 @@ public class AddressServiceImpl implements AddressService {
      * 新增地址：若设为默认，先取消原有默认
      */
     @Override
-    @Transactional // 事务保证操作原子性
+    @Transactional(rollbackFor = Exception.class) // 事务保证操作原子性
     public boolean addAddress(AddressDTO addressDTO) {
         // 1. 如果设为默认地址，先取消该用户原有默认
         if (1 == addressDTO.getIsDefault()) {
@@ -50,7 +50,7 @@ public class AddressServiceImpl implements AddressService {
      * 修改地址：若设为默认，先取消原有默认
      */
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateAddress(AddressDTO addressDTO, Long id) {
         // 1. 如果设为默认地址，先取消该用户原有默认
         if (1 == addressDTO.getIsDefault()) {

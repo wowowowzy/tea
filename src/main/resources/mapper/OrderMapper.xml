@@ -3,7 +3,7 @@
 
 <mapper namespace="com.example.tea.mapper.OrderMapper">
     <insert id="pay">
-        insert into `order`(user_id, goods_id, order_id, quantity, create_time, update_time)
+        insert into `order`(user_id, goods_id, order_id, quantity, create_time, update_time,status)
         values
         <foreach collection="list" item="order" separator=",">
             (
@@ -12,7 +12,8 @@
             #{order.orderId},
             #{order.quantity},
             #{order.createTime},
-            #{order.updateTime}
+            #{order.updateTime},
+            #{order.status}
             )
         </foreach>
     </insert>
@@ -36,7 +37,8 @@
             g.goods_price,
             g.goods_intro,
             od.coupon_id,
-            od.total_price
+            od.total_price,
+            o.status
         FROM `order` o
                  LEFT JOIN goods g ON o.goods_id = g.goods_id
                  LEFT JOIN order_detail od ON CAST(o.order_id AS CHAR) = od.order_id
@@ -53,7 +55,9 @@
             g.goods_price,
             g.goods_intro,
             od.coupon_id,
-            od.total_price
+            od.total_price,
+            o.status
+
         FROM `order` o
                  LEFT JOIN goods g ON o.goods_id = g.goods_id
                  LEFT JOIN order_detail od ON CAST(o.order_id AS CHAR) = od.order_id
@@ -61,6 +65,24 @@
         ORDER BY o.create_time DESC
     </select>
 
+    <select id="getOrdersAdmin" resultType="com.example.tea.entity.dto.Order.OrderDTO">
+        SELECT
+            o.order_id,
+            o.create_time,
+            o.quantity,
+            g.goods_name,
+            g.goods_image,
+            g.goods_price,
+            g.goods_intro,
+            od.coupon_id,
+            od.total_price,
+            o.status
+        FROM `order` o
+                 LEFT JOIN goods g ON o.goods_id = g.goods_id
+                 LEFT JOIN order_detail od ON CAST(o.order_id AS CHAR) = od.order_id
+        WHERE o.status = 0
+        ORDER BY o.create_time DESC
+    </select>
 
 
 </mapper>
