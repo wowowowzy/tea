@@ -1,5 +1,6 @@
 package com.example.tea.service.impl;
 
+import com.example.tea.entity.dto.Goods.GoodsDTO;
 import com.example.tea.entity.dto.Goods.GoodsInsertDTO;
 import com.example.tea.entity.dto.Goods.GoodsQueryDTO;
 import com.example.tea.entity.pojo.Goods.Goods;
@@ -31,7 +32,7 @@ public class GoodsServiceImpl implements GoodsService {
                 goodsQueryDTO.getPage()==null ? 1 : goodsQueryDTO.getPage(),
                 goodsQueryDTO.getPageSize()==null ? 10 : goodsQueryDTO.getPageSize()
         );
-        Page<GoodsInsertDTO> page = goodsMapper.findAllGoods(goodsQueryDTO);
+        Page<GoodsDTO> page = goodsMapper.findAllGoods(goodsQueryDTO);
         return PageResult.builder()
                 .total(page.getTotal())
                 .records(page.getResult())

@@ -1,5 +1,6 @@
 package com.example.tea.mapper;
 
+import com.example.tea.entity.dto.Goods.GoodsDTO;
 import com.example.tea.entity.dto.Goods.GoodsInsertDTO;
 import com.example.tea.entity.dto.Goods.GoodsQueryDTO;
 import com.example.tea.entity.dto.Order.OrderAndGoodsDTO;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @Mapper
 public interface GoodsMapper {
-    Page<GoodsInsertDTO> findAllGoods(GoodsQueryDTO goodsQueryDTO);
+    Page<GoodsDTO> findAllGoods(GoodsQueryDTO goodsQueryDTO);
 
     @Select("select * from goods where goods_id=#{goodsId}")
     GoodsVO findGoodById(Long goodsId);

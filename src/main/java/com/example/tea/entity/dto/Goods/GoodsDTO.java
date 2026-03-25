@@ -15,4 +15,6 @@ public class GoodsDTO {
     private BigDecimal goodsPrice;
 
     private String goodsImage;
+
+    private Long categoryId;
 }

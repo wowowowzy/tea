@@ -49,8 +49,8 @@
         DELETE FROM goods
         WHERE goods_id = #{goodsId}
     </delete>
-    <select id="findAllGoods" resultType="com.example.tea.entity.dto.Goods.GoodsInsertDTO">
-        select goods_id,goods_name,goods_price,goods_image from goods
+    <select id="findAllGoods" resultType="com.example.tea.entity.dto.Goods.GoodsDTO">
+        select goods_id,goods_name,goods_price,goods_image,category_id from goods
         <where>
             <if test="categoryId!=null">and category_id=#{categoryId}</if>
             <if test="goodsName!=null and goodsName!=''">
