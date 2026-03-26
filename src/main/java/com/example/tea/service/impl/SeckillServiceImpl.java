@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -96,5 +98,10 @@ public class SeckillServiceImpl implements SeckillService {
             goodsMapper.updateSeckillStocks(goodsId,stock);
         }
         return "初始化成功";
+    }
+
+    @Override
+    public List<GoodsVO> getAllSeckillGoods() {
+        return goodsMapper.getAllSeckillGoods();
     }
 }

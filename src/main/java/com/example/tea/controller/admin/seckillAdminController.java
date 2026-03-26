@@ -3,6 +3,7 @@ package com.example.tea.controller.admin;
 import com.example.tea.entity.pojo.Result;
 import com.example.tea.service.SeckillService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,5 +26,13 @@ public class seckillAdminController {
     @PostMapping("initStock")
     public Result initStock(Long goodsId, int stock) {
         return Result.success(seckillService.initStock(goodsId, stock));
+    }
+    /**
+     * 获取所有秒杀商品
+     * @return
+     */
+    @GetMapping("getAllSeckillGoods")
+    public Result getAllSeckillGoods() {
+        return Result.success(seckillService.getAllSeckillGoods());
     }
 }

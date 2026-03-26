@@ -48,4 +48,8 @@ public interface GoodsMapper {
 
     @Update("update goods_seckill set stock_num=#{stock} where goods_id= #{goodsId}")
     void updateSeckillStocks(Long goodsId,int stock);
+
+    @Select("select goods_id, goods_name, goods_intro, goods_price, category_id, stock_num, goods_image from goods_seckill")
+    List<GoodsVO> getAllSeckillGoods();
+
 }
