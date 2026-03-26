@@ -27,6 +27,9 @@
                 )
 
     </insert>
+    <update id="updateStocks">
+
+    </update>
     <select id="getOrders" resultType="com.example.tea.entity.dto.Order.OrderDTO">
         SELECT
             o.order_id,

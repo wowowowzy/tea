@@ -1,6 +1,7 @@
 package com.example.tea.mapper;
 
 import com.example.tea.entity.dto.Order.OrderDTO;
+import com.example.tea.entity.dto.Order.OrderPayDTO;
 import com.example.tea.entity.pojo.Order.Order;
 import com.example.tea.entity.pojo.Order.OrderDetail;
 import org.apache.ibatis.annotations.Mapper;
@@ -23,4 +24,5 @@ public interface OrderMapper {
 
     @Update("update `order` set status = 1 where id = #{orderId}")
     void approval(Long orderId);
+
 }

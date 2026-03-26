@@ -35,12 +35,22 @@
             update_time = NOW()
         WHERE goods_id = #{goodsId}
     </update>
-    <update id="updateStock">
-            UPDATE goods
-            SET stock_num = stock_num - #{quantity},
-            update_time = NOW()
-            WHERE goods_id = #{goodsId}
-            AND stock_num >= #{quantity}
+    <update id="updateStocks">
+        UPDATE goods
+        SET stock_num = CASE goods_id
+        <foreach collection="list" item="item">
+            WHEN #{item.goodsId} THEN stock_num - #{item.quantity}
+        </foreach>
+                END,
+                update_time = NOW()
+                WHERE goods_id IN
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item.goodsId}
+        </foreach>
+        AND stock_num >=
+        <foreach collection="list" item="item" open="CASE goods_id " separator=" " close="END">
+            WHEN #{item.goodsId} THEN #{item.quantity}
+        </foreach>
     </update>
 
     <delete id="deleteById">
