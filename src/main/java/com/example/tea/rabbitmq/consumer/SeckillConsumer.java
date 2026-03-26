@@ -1,15 +1,24 @@
 package com.example.tea.rabbitmq.consumer;
 
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
 import com.example.tea.config.RabbitMQseckillConfig;
 import com.example.tea.entity.dto.Goods.SeckillGoodsMessageDTO;
 import com.example.tea.entity.dto.Order.OrderPayDTO;
+import com.example.tea.entity.pojo.Order.Order;
+import com.example.tea.entity.pojo.Order.OrderDetail;
+import com.example.tea.mapper.GoodsMapper;
+import com.example.tea.mapper.OrderMapper;
 import com.example.tea.service.OrderService;
 import com.example.tea.utils.ThreadLocalUserIdUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,30 +30,39 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class SeckillConsumer {
-
-    // 你项目里的 订单Service（改成你自己的就行）
-    private final OrderService orderService;
+    private final GoodsMapper goodsMapper;
+    private final Snowflake snowflake = IdUtil.getSnowflake();
+    private final OrderMapper orderMapper;
 
     /**
      * 监听秒杀队列 → 异步消费
      */
     @RabbitListener(queues = RabbitMQseckillConfig.SECKILL_QUEUE)
-    public void seckillConsumer(SeckillGoodsMessageDTO message) {
-        try {
-            Long goodsId = message.getGoodsId();
-            Long userId = message.getUserId();
-            ThreadLocalUserIdUtil.setCurrentId(userId);
-            log.info("【秒杀消费】开始创建订单 userId:{} goodsId:{}", userId, goodsId);
-            List<OrderPayDTO> payDTOList = new ArrayList<>();
-            payDTOList.add(OrderPayDTO.builder()
-                    .goodsId(Math.toIntExact(goodsId))
-                    .quantity(1)
-                    .build());
-            orderService.pay(payDTOList,null);
-            log.info("【秒杀消费】订单创建成功 userId:{} goodsId:{}", userId, goodsId);
-
-        } catch (Exception e) {
-            log.error("【秒杀消费】异常：", e);
-        }
+    public void handleSeckillMessage(SeckillGoodsMessageDTO message) {
+        Long goodsId = message.getGoodsId();
+        Long userId = message.getUserId();
+        Long orderId = snowflake.nextId();
+        Order order = Order.builder()
+                .userId(userId)
+                .goodsId(Math.toIntExact(goodsId))
+                .orderId(orderId)
+                .quantity(1)
+                .createTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now())
+                .status(0)
+                .build();
+        List<Order> orderList = new ArrayList<>();
+        orderList.add(order);
+        orderMapper.pay(orderList);
+        BigDecimal goodsPrice = goodsMapper.findGoodById(goodsId).getGoodsPrice();
+        OrderDetail orderDetail = OrderDetail.builder()
+                .orderId(String.valueOf(orderId))
+                .userId(userId)
+                .totalPrice(goodsPrice)
+                .createTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now())
+                .build();
+        goodsMapper.subSeckillStock(message.getGoodsId());
+        orderMapper.insertDetail(orderDetail);
     }
 }

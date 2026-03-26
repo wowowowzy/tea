@@ -2,10 +2,13 @@ package com.example.tea.service.impl;
 
 import com.example.tea.config.RabbitMQseckillConfig;
 import com.example.tea.entity.dto.Goods.SeckillGoodsMessageDTO;
+import com.example.tea.entity.vo.Goods.GoodsVO;
+import com.example.tea.mapper.GoodsMapper;
 import com.example.tea.service.SeckillService;
 import com.example.tea.utils.ThreadLocalUserIdUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RequiredArgsConstructor
 public class SeckillServiceImpl implements SeckillService {
+    @Autowired
+    private GoodsMapper goodsMapper;
 
     private final StringRedisTemplate redisTemplate;
     private final RabbitTemplate rabbitTemplate;
@@ -54,20 +59,25 @@ public class SeckillServiceImpl implements SeckillService {
         SeckillGoodsMessageDTO message = new SeckillGoodsMessageDTO();
         message.setGoodsId(goodsId);
         message.setUserId(userId);
+        rabbitTemplate.convertAndSend(
+                RabbitMQseckillConfig.SECKILL_EXCHANGE,
+                RabbitMQseckillConfig.SECKILL_ROUTING_KEY,
+                message
+        );
 
-        try {
-            rabbitTemplate.convertAndSend(
-                    RabbitMQseckillConfig.SECKILL_EXCHANGE,
-                    RabbitMQseckillConfig.SECKILL_ROUTING_KEY,
-                    message
-            );
-        } catch (Exception e) {
-            // MQ发送失败 → 库存回滚
-            redisTemplate.opsForValue().increment(stockKey);
-            redisTemplate.delete(userKey);
-            log.error("MQ发送失败，库存回滚");
-            return "系统繁忙，请重试";
-        }
+//        try {
+//            rabbitTemplate.convertAndSend(
+//                    RabbitMQseckillConfig.SECKILL_EXCHANGE,
+//                    RabbitMQseckillConfig.SECKILL_ROUTING_KEY,
+//                    message
+//            );
+//        } catch (Exception e) {
+//            // MQ发送失败 → 库存回滚
+//            redisTemplate.opsForValue().increment(stockKey);
+//            redisTemplate.delete(userKey);
+//            log.error("MQ发送失败，库存回滚");
+//            return "系统繁忙，请重试";
+//        }
         return "抢购成功，已排队生成订单";
     }
 
@@ -78,6 +88,13 @@ public class SeckillServiceImpl implements SeckillService {
             String stockKey = STOCK_PREFIX + goodsId;
             redisTemplate.opsForValue().set(stockKey, String.valueOf(stock));
             log.info("商品{} 初始化库存：{}", goodsId, stock);
-            return "初始化成功";
+        GoodsVO goodsVO = goodsMapper.findGoodById(goodsId);
+        goodsVO.setStockNum(stock);
+        if (goodsMapper.vaildateSeckill(goodsId)==0) {
+            goodsMapper.initStock(goodsVO);
+        } else {
+            goodsMapper.updateSeckillStocks(goodsId,stock);
+        }
+        return "初始化成功";
     }
 }

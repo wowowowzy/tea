@@ -1,11 +1,26 @@
 package com.example.tea.config;
 
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.amqp.support.converter.SimpleMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Collections;
+
 @Configuration
 public class RabbitMQseckillConfig {
+
+    @Bean
+    public MessageConverter messageConverter() {
+        SimpleMessageConverter converter = new SimpleMessageConverter();
+
+        // 方法1：添加单个全限定类名（精准匹配你的报错类）
+        converter.setAllowedListPatterns(
+                Collections.singletonList("com.example.tea.entity.dto.*")
+        );
+        return converter;
+    }
 
     // 秒杀交换机
     public static final String SECKILL_EXCHANGE = "seckill.exchange";

@@ -194,29 +194,5 @@ public class OrderServiceImpl implements OrderService {
         orderMapper.approval(orderId);
     }
 
-    @RabbitListener(queues = RabbitMQseckillConfig.SECKILL_QUEUE)
-    public void handleSeckillMessage(SeckillGoodsMessageDTO message) {
-        Long goodsId = message.getGoodsId();
-        Long userId = message.getUserId();
-        Long orderId = snowflake.nextId();
-        Order order = Order.builder()
-                .userId(userId)
-                .goodsId(Math.toIntExact(goodsId))
-                .orderId(orderId)
-                .quantity(1)
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now()).build();
-        List<Order> orderList = new ArrayList<>();
-        orderList.add(order);
-        orderMapper.pay(orderList);
-        BigDecimal goodsPrice = goodsMapper.findGoodById(goodsId).getGoodsPrice();
-        OrderDetail orderDetail = OrderDetail.builder()
-                .orderId(String.valueOf(orderId))
-                .userId(userId)
-                .totalPrice(goodsPrice)
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
-                .build();
-        orderMapper.insertDetail(orderDetail);
-    }
+
 }
