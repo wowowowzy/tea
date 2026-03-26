@@ -33,5 +33,5 @@ public interface GoodsMapper {
     @Select("select * from goods where goods_id=#{goodsId}")
     Goods findGoodByIdAdmin(Long goodsId);
 
-    Integer updateStock(List<OrderPayDTO> list);
+    Integer updateStock(OrderPayDTO dto);
 }

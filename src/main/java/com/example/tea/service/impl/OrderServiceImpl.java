@@ -56,8 +56,13 @@ public class OrderServiceImpl implements OrderService {
                 .build()).toList();
         orderMapper.pay(orderList);
 
+        int updateStock = 0;
         //减库存
-        Integer updateStock = goodsMapper.updateStock(payDTOList);
+        //TODO 如果可以优化....
+        for (OrderPayDTO orderPayDTO : payDTOList) {
+            goodsMapper.updateStock(orderPayDTO);
+            updateStock = updateStock + 1;
+        }
         if (updateStock != payDTOList.size()){
             throw new Exception("部分商品库存不足，请重新下单");
         }

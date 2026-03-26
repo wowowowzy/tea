@@ -12,7 +12,7 @@ import java.util.List;
 public interface CouponMapper {
     void insertQuestionCoupon(Coupon coupon);
 
-    @Select("select * from coupon where user_id = #{id}")
+    @Select("select * from coupon where user_id = #{id} and status =1 ")
     List<CouponVO> getCoupon(Long id);
 
     @Select("select * from coupon where user_id = #{id} and end_time > now() and status = 1")
