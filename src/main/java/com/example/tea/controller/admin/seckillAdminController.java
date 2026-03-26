@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.math.BigDecimal;
+
 /**
  * (Admin管理员)秒杀商品接口
  */
@@ -24,8 +27,8 @@ public class seckillAdminController {
      */
 
     @PostMapping("initStock")
-    public Result initStock(Long goodsId, int stock) {
-        return Result.success(seckillService.initStock(goodsId, stock));
+    public Result initStock(Long goodsId, int stock, BigDecimal goodsPrice) {
+        return Result.success(seckillService.initStock(goodsId, stock,goodsPrice));
     }
     /**
      * 获取所有秒杀商品

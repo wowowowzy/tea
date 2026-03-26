@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -86,16 +87,17 @@ public class SeckillServiceImpl implements SeckillService {
     /**
      * 初始化库存到 Redis（秒杀前调用）
      */
-    public String initStock(Long goodsId, int stock) {
+    public String initStock(Long goodsId, int stock, BigDecimal goodsPrice) {
             String stockKey = STOCK_PREFIX + goodsId;
             redisTemplate.opsForValue().set(stockKey, String.valueOf(stock));
             log.info("商品{} 初始化库存：{}", goodsId, stock);
         GoodsVO goodsVO = goodsMapper.findGoodById(goodsId);
         goodsVO.setStockNum(stock);
+        goodsVO.setGoodsPrice(goodsPrice);
         if (goodsMapper.vaildateSeckill(goodsId)==0) {
             goodsMapper.initStock(goodsVO);
         } else {
-            goodsMapper.updateSeckillStocks(goodsId,stock);
+            goodsMapper.updateSeckillStocks(goodsId,stock,goodsPrice);
         }
         return "初始化成功";
     }
