@@ -59,7 +59,7 @@ public class CommunityServiceImpl implements CommunityService {
     public PostDetailVO getPostDetail(Long postId) {
         // 1. 查询帖子基础信息
         PostWithUsernameDTO post = communityMapper.selectById(postId);
-        List<CommentDTO> comments = communityMapper.getCommentByPostId(postId);
+        List<CommentDTO> comments = communityMapper.getCommentByPostId(postId,ThreadLocalUserIdUtil.getCurrentId());
 
         if (post == null|| post.getStatus().equals(0)) {
             throw new RuntimeException("帖子不存在或已删除");

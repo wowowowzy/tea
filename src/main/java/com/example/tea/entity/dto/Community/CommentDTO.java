@@ -15,4 +15,5 @@ public class CommentDTO {
     private Integer likeCount;
     private Long postId;
     private String userImage;
+    private Integer isCancel;
 }

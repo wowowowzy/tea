@@ -9,12 +9,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-
+/**
+ * (Admin管理员)日志接口
+ */
 @RestController
 @RequestMapping("/api/admin/log")
 public class LogAdminController {
     @Autowired
     private SysOperLogMapper sysOperLogMapper;
+
+    /**
+     * 日志展示
+     * @return
+     */
     @GetMapping("showLog")
     public Result showLog(){
          List<SysOperLog> logs = sysOperLogMapper.getAllLogList();

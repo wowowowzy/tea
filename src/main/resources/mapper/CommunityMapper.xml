@@ -116,6 +116,13 @@
         and l.target_id = #{postId}
         and l.target_type = 1
     </select>
+    <select id="getCommentByPostId" resultType="com.example.tea.entity.dto.Community.CommentDTO">
+        select t.id,u.username,t.user_id, t.content, t.parent_id, t.to_user_id, t.like_count,t.post_id,u.avatar as userImage,IFNULL(l.is_cancel, -1)
+        from t_comment t
+            left join sys_user u on t.user_id = u.id
+            left join like_record l on t.id = l.target_id and l.target_type = 2 and l.user_id=#{userId}
+        where post_id = #{postId}
+    </select>
 
 
 </mapper>
