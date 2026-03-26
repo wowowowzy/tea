@@ -18,9 +18,6 @@ build/
 logs/
 *.log
 
-# 临时文件
-*.tmp
-*.temp
 # Maven本地仓库缓存
 .m2/
 
