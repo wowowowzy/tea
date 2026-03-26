@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -38,6 +39,7 @@ public class SeckillConsumer {
      * 监听秒杀队列 → 异步消费
      */
     @RabbitListener(queues = RabbitMQseckillConfig.SECKILL_QUEUE)
+    @Transactional(rollbackFor = Exception.class)
     public void handleSeckillMessage(SeckillGoodsMessageDTO message) {
         Long goodsId = message.getGoodsId();
         Long userId = message.getUserId();
@@ -62,7 +64,8 @@ public class SeckillConsumer {
                 .createTime(LocalDateTime.now())
                 .updateTime(LocalDateTime.now())
                 .build();
-        goodsMapper.subSeckillStock(message.getGoodsId());
+        goodsMapper.subSeckillStock(goodsId);
+        goodsMapper.subGoodsStock(goodsId);
         orderMapper.insertDetail(orderDetail);
     }
 }

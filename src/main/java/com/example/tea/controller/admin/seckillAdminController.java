@@ -21,8 +21,6 @@ public class seckillAdminController {
 
     /**
      * 设置秒杀商品库存
-     * @param goodsId
-     * @param stock
      * @return
      */
 
