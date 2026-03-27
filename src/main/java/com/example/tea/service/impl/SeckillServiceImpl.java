@@ -55,8 +55,8 @@ public class SeckillServiceImpl implements SeckillService {
             return "已抢完";
         }
 
-        // 5. 标记用户已抢（24小时过期） TODO
-        redisTemplate.opsForValue().set(userKey, "1", 24, TimeUnit.SECONDS);
+        // 5. 标记用户已抢（24小时过期）
+        redisTemplate.opsForValue().set(userKey, "1", 24, TimeUnit.HOURS);
 
         // 6. 发送消息到 MQ → 异步下单
         SeckillGoodsMessageDTO message = new SeckillGoodsMessageDTO();
