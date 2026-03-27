@@ -20,7 +20,7 @@ import java.util.List;
 public interface GoodsMapper {
     Page<GoodsDTO> findAllGoods(GoodsQueryDTO goodsQueryDTO);
 
-    @Select("select goods_id,goods_name,goods_intro,goods_price,category_id,stock_num,goods_image from goods_seckill where goods_id=#{goodsId}")
+    @Select("select goods_id,goods_name,goods_intro,goods_price,category_id,stock_num,goods_image from goods where goods_id=#{goodsId}")
     GoodsVO findGoodById(Long goodsId);
 
     List<OrderAndGoodsDTO> getTotalPrice(List<OrderPayDTO> payDTOList);
@@ -55,4 +55,7 @@ public interface GoodsMapper {
 
     @Update("update goods set stock_num = stock_num - 1 where goods_id=#{goodsId}")
     void subGoodsStock(Long goodsId);
+
+    @Select("select goods_price from goods_seckill where goods_id= #{goodsId}")
+    BigDecimal findSeckillGoodById(Long goodsId);
 }

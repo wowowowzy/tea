@@ -14,8 +14,6 @@ public class RabbitMQseckillConfig {
     @Bean
     public MessageConverter messageConverter() {
         SimpleMessageConverter converter = new SimpleMessageConverter();
-
-        // 方法1：添加单个全限定类名（精准匹配你的报错类）
         converter.setAllowedListPatterns(
                 Collections.singletonList("com.example.tea.entity.dto.*")
         );

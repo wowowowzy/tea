@@ -55,32 +55,27 @@ public class SeckillServiceImpl implements SeckillService {
             return "已抢完";
         }
 
-        // 5. 标记用户已抢（24小时过期）
-        redisTemplate.opsForValue().set(userKey, "1", 24, TimeUnit.HOURS);
+        // 5. 标记用户已抢（24小时过期） TODO
+        redisTemplate.opsForValue().set(userKey, "1", 24, TimeUnit.SECONDS);
 
         // 6. 发送消息到 MQ → 异步下单
         SeckillGoodsMessageDTO message = new SeckillGoodsMessageDTO();
         message.setGoodsId(goodsId);
         message.setUserId(userId);
-        rabbitTemplate.convertAndSend(
-                RabbitMQseckillConfig.SECKILL_EXCHANGE,
-                RabbitMQseckillConfig.SECKILL_ROUTING_KEY,
-                message
-        );
 
-//        try {
-//            rabbitTemplate.convertAndSend(
-//                    RabbitMQseckillConfig.SECKILL_EXCHANGE,
-//                    RabbitMQseckillConfig.SECKILL_ROUTING_KEY,
-//                    message
-//            );
-//        } catch (Exception e) {
-//            // MQ发送失败 → 库存回滚
-//            redisTemplate.opsForValue().increment(stockKey);
-//            redisTemplate.delete(userKey);
-//            log.error("MQ发送失败，库存回滚");
-//            return "系统繁忙，请重试";
-//        }
+        try {
+            rabbitTemplate.convertAndSend(
+                    RabbitMQseckillConfig.SECKILL_EXCHANGE,
+                    RabbitMQseckillConfig.SECKILL_ROUTING_KEY,
+                    message
+            );
+        } catch (Exception e) {
+            // MQ发送失败 → 库存回滚
+            redisTemplate.opsForValue().increment(stockKey);
+            redisTemplate.delete(userKey);
+            log.error("MQ发送失败，库存回滚");
+            return "系统繁忙，请重试";
+        }
         return "抢购成功，已排队生成订单";
     }
 

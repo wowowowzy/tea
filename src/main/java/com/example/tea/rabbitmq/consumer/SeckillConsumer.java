@@ -56,7 +56,7 @@ public class SeckillConsumer {
         List<Order> orderList = new ArrayList<>();
         orderList.add(order);
         orderMapper.pay(orderList);
-        BigDecimal goodsPrice = goodsMapper.findGoodById(goodsId).getGoodsPrice();
+        BigDecimal goodsPrice = goodsMapper.findSeckillGoodById(goodsId);
         OrderDetail orderDetail = OrderDetail.builder()
                 .orderId(String.valueOf(orderId))
                 .userId(userId)
