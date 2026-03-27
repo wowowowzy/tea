@@ -63,7 +63,7 @@ public class GoodsAdminController {
      * @param id
      * @return
      */
-    @PutMapping("/delete")
+    @DeleteMapping("/delete")
     public Result delete(@RequestParam(value = "goodsId") Long id) {
         goodsService.deleteGoods(id);
         return Result.success("删除成功");
