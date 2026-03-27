@@ -41,7 +41,7 @@ spring:
       base-url: https://yinli.one
       chat:
         options:
-          model: gpt-4o-mini
+          model: gpt-5.1
   rabbitmq:
     host: 192.168.186.128
     port: 5672
