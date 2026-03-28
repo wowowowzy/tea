@@ -37,7 +37,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
   ai:
     openai:
-      api-key:  sk-vir53o4YsOrBdAXZb236q1MwK16k0xy6nKLPVBtTSjc3uFxO #稳定分组key sk-vir53o4YsOrBdAXZb236q1MwK16k0xy6nKLPVBtTSjc3uFxO
+      api-key:  sk-vir53o4YsOrBdAXZb236q1MwK16k0xy6nKLPVBtTSjc3uFxO
       base-url: https://yinli.one
       chat:
         options:
