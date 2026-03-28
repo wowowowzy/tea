@@ -2,6 +2,7 @@ package com.example.tea.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
+import com.example.tea.annotation.OperLog;
 import com.example.tea.config.RabbitMQseckillConfig;
 import com.example.tea.entity.dto.Goods.SeckillGoodsMessageDTO;
 import com.example.tea.entity.dto.Order.OrderAndGoodsDTO;
@@ -190,6 +191,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @OperLog(module = "订单", type = "审批")
     public void approval(Long orderId) {
         orderMapper.approval(orderId);
     }
