@@ -37,7 +37,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
   ai:
     openai:
-      api-key:  sk-vir53o4YsOrBdAXZb236q1MwK16k0xy6nKLPVBtTSjc3uFxO
+      api-key:
       base-url: https://yinli.one
       chat:
         options:
@@ -55,8 +55,8 @@ jwt:
   expire: 72000000
 
 alioss:
-  access-key-id: ${OSS_ACCESS_KEY_ID}
-  access-key-secret: ${OSS_ACCESS_KEY_SECRET}
+  access-key-id:
+  access-key-secret:
   bucket-name: java-web-itheima-zy
   endpoint: oss-cn-beijing.aliyuncs.com
 

@@ -11,6 +11,7 @@ import com.example.tea.rabbitmq.producer.CouponDelayProducer;
 import com.example.tea.service.QuestionService;
 import com.example.tea.utils.ThreadLocalUserIdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +30,10 @@ public class QuestionServiceImpl implements QuestionService {
     private CouponMapper couponMapper;
     @Autowired
     private CouponDelayProducer couponDelayProducer;
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    private static final String USER_COUPON_KEY = "user:coupon:";
     @Override
     public List<QuestionVO> getQuestion() {
         Integer scope = questionMapper.queryQuestionScope();//查询当前questionId的最大值方便分配id
@@ -59,6 +65,8 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public AnswerQuestionVO getAnswer(List<VaildateQuestionDTO> userOptions) {
+        String userCouponKey = USER_COUPON_KEY+ThreadLocalUserIdUtil.getCurrentId();
+
         List<Integer> numList = userOptions.stream().map(VaildateQuestionDTO::getQuestionId).toList();
         List<VaildateQuestionDTO> answer = questionMapper.getAnswer(numList);
 
@@ -68,9 +76,9 @@ public class QuestionServiceImpl implements QuestionService {
             return !list.get(0).getOptionLabel().equalsIgnoreCase(user.getOptionLabel());
         }).toList();
 
-        if(userOptions.size()-wrong.size()>=2){
+        if(userOptions.size()-wrong.size()>=3){
             //检验是否有未过期优惠卷
-            if (couponMapper.getUnusedCoupon(ThreadLocalUserIdUtil.getCurrentId()).size()==0) {
+            if (couponMapper.getUnusedCoupon(ThreadLocalUserIdUtil.getCurrentId()).size()==0&&!redisTemplate.hasKey(userCouponKey)) {
                 Coupon coupon = Coupon.builder()
                         .userId(ThreadLocalUserIdUtil.getCurrentId())
                         .intro("满200-50全场通用")
@@ -84,6 +92,8 @@ public class QuestionServiceImpl implements QuestionService {
                         .build();
                 couponMapper.insertQuestionCoupon(coupon);
                 couponDelayProducer.sendDelayCouponMessage(coupon.getId(), 1000 * 60 * 60 * 24);
+                //操作redis保存
+                redisTemplate.opsForValue().set(userCouponKey,1,24, TimeUnit.HOURS);
                 return AnswerQuestionVO.builder()
                         .msg(new StringBuffer().append("回答正确").append(userOptions.size()-wrong.size()).append("道题目").append("!获得的满200-50全场通用卷已经发放到您的账户").toString())
                         .answerList(answer)
