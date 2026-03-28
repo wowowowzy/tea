@@ -22,7 +22,7 @@ public interface OrderMapper {
 
     List<OrderDTO> getOrdersAdmin();
 
-    @Update("update `order` set status = 1 where id = #{orderId}")
+    @Update("update `order` set status = 1 where order_id = #{orderId}")
     void approval(Long orderId);
 
 }
