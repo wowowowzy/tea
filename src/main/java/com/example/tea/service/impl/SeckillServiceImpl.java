@@ -34,6 +34,7 @@ public class SeckillServiceImpl implements SeckillService {
     /**
      * 秒杀核心方法
      */
+    @Override
     public String seckill(Long goodsId) {
         Long userId = ThreadLocalUserIdUtil.getCurrentId();
         // 1. 拼接key
@@ -82,6 +83,7 @@ public class SeckillServiceImpl implements SeckillService {
     /**
      * 初始化库存到 Redis（秒杀前调用）
      */
+    @Override
     public String initStock(Long goodsId, int stock, BigDecimal goodsPrice) {
             String stockKey = STOCK_PREFIX + goodsId;
             redisTemplate.opsForValue().set(stockKey, String.valueOf(stock));

@@ -38,4 +38,12 @@ public class EchartController {
     public Result showOrderCategoryCount(){
         return Result.success(eChartService.showOrderCategoryCount());
     }
+    /**
+     * 仪表盘展示
+     * @return
+     */
+    @GetMapping("/showData")
+    public Result showData(){
+        return Result.success(eChartService.showData());
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.tea.controller.admin;
 
+import com.example.tea.annotation.OperLog;
 import com.example.tea.entity.pojo.Result;
 import com.example.tea.service.SeckillService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ public class seckillAdminController {
      */
 
     @PostMapping("initStock")
+    @OperLog(module = "秒杀商品", type = "设置库存")
     public Result initStock(Long goodsId, int stock, BigDecimal goodsPrice) {
         return Result.success(seckillService.initStock(goodsId, stock,goodsPrice));
     }

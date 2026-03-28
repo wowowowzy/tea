@@ -48,7 +48,6 @@ public class GoodsServiceImpl implements GoodsService {
 
     // 新增
     @Override
-    @OperLog(module = "商品", type = "新增")
     public void addGoods(GoodsInsertDTO dto) {
         goodsMapper.insert(dto);
     }
@@ -56,7 +55,6 @@ public class GoodsServiceImpl implements GoodsService {
     // 修改
     @Override
     @CachePut(value = "goods", key = "#goodsId")
-    @OperLog(module = "商品", type = "修改")
     public void updateGoods(Long goodsId,GoodsInsertDTO dto) {
         Goods goods = new Goods();
         BeanUtils.copyProperties(dto, goods);
@@ -66,7 +64,6 @@ public class GoodsServiceImpl implements GoodsService {
 
     // 物理删除
     @Override
-    @OperLog(module = "商品", type = "删除")
     @CacheEvict(value = "goods", key = "#goodsId")
     public void deleteGoods(Long goodsId) {
         goodsMapper.deleteById(goodsId);

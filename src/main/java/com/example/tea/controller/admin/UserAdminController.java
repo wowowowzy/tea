@@ -1,5 +1,6 @@
 package com.example.tea.controller.admin;
 
+import com.example.tea.annotation.OperLog;
 import com.example.tea.entity.dto.User.LoginInfo;
 import com.example.tea.entity.dto.User.UserQueryDTO;
 import com.example.tea.entity.pojo.Result;
@@ -47,6 +48,7 @@ public class UserAdminController {
      * @return
      */
     @PostMapping("/banUser")
+    @OperLog(module = "用户管理", type = "封禁")
     public Result banUser(@RequestParam(value = "userId") Long userId){
         return userService.banUser(userId);
     }
@@ -55,7 +57,8 @@ public class UserAdminController {
      * @param userId
      * @return
      */
-    @GetMapping ("/switchBanUser")
+    @PostMapping ("/switchBanUser")
+    @OperLog(module = "用户管理", type = "解禁")
     public Result switchBanUser(@RequestParam(value = "userId") Long userId){
         return userService.switchBanUser(userId);
     }

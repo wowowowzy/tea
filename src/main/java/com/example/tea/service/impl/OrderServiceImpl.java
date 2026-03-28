@@ -191,7 +191,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @OperLog(module = "订单", type = "审批")
     public void approval(Long orderId) {
         orderMapper.approval(orderId);
     }

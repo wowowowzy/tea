@@ -1,6 +1,7 @@
 package com.example.tea.service.impl;
 
 import com.example.tea.entity.pojo.Echart.DateWithNum;
+import com.example.tea.entity.pojo.Echart.EchartData;
 import com.example.tea.entity.pojo.Echart.OrderCategory;
 import com.example.tea.entity.pojo.Order.Order;
 import com.example.tea.entity.pojo.User.User;
@@ -64,5 +65,15 @@ public class EchartServiceImpl implements EchartService {
     @Override
     public List<OrderCategory> showOrderCategoryCount() {
         return echartMapper.showOrderCategoryCount();
+    }
+
+    @Override
+    public EchartData showData() {
+        return EchartData.builder()
+                .goodsTotal(echartMapper.goodsTotal())
+                .orderTotal(echartMapper.orderTotal())
+                .userTotal(echartMapper.userTotal())
+                .priceTotal(echartMapper.priceTotal())
+                .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.example.tea.controller.admin;
 
+import com.example.tea.annotation.OperLog;
 import com.example.tea.entity.dto.Goods.GoodsInsertDTO;
 import com.example.tea.entity.dto.Goods.GoodsQueryDTO;
 import com.example.tea.entity.pojo.Result;
@@ -41,6 +42,7 @@ public class GoodsAdminController {
      * @return
      */
     @PostMapping("/add")
+    @OperLog(module = "商品管理", type = "添加")
     public Result add(@RequestBody GoodsInsertDTO dto) {
         goodsService.addGoods(dto);
         return Result.success("新增成功");
@@ -53,6 +55,7 @@ public class GoodsAdminController {
      * @return
      */
     @PostMapping("/update")
+    @OperLog(module = "商品管理", type = "修改")
     public Result update(@RequestParam(value = "goodsId") Long id,@RequestBody GoodsInsertDTO dto) {
         goodsService.updateGoods(id, dto);
         return Result.success("修改成功");
@@ -64,6 +67,7 @@ public class GoodsAdminController {
      * @return
      */
     @DeleteMapping("/delete")
+    @OperLog(module = "商品管理", type = "删除")
     public Result delete(@RequestParam(value = "goodsId") Long id) {
         goodsService.deleteGoods(id);
         return Result.success("删除成功");
