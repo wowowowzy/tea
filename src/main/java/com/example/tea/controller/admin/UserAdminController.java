@@ -50,4 +50,13 @@ public class UserAdminController {
     public Result banUser(@RequestParam(value = "userId") Long userId){
         return userService.banUser(userId);
     }
+    /**
+     * 解禁用户
+     * @param userId
+     * @return
+     */
+    @GetMapping ("/switchBanUser")
+    public Result switchBanUser(@RequestParam(value = "userId") Long userId){
+        return userService.switchBanUser(userId);
+    }
 }

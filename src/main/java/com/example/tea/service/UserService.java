@@ -19,4 +19,6 @@ public interface UserService {
     PageResult showUserAdmin(UserQueryDTO dto);
 
     Result banUser(Long userId);
+
+    Result switchBanUser(Long userId);
 }

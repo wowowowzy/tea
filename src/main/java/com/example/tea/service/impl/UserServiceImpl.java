@@ -155,4 +155,11 @@ public class UserServiceImpl implements UserService {
         userMapper.banUser(userId);
         return Result.success();
     }
+
+    @Override
+    public Result switchBanUser(Long userId) {
+        userMapper.switchBanUser(userId);
+        return Result.success();
+    }
+
 }

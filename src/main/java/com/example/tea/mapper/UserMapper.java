@@ -34,4 +34,7 @@ public interface UserMapper {
 
     @Update("update sys_user set status = 0 where id = #{userId}")
     void banUser(Long userId);
+
+    @Update("update sys_user set status = 1 where id = #{userId}")
+    void switchBanUser(Long userId);
 }
