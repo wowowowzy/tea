@@ -32,16 +32,21 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/book?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8&allowMultiQueries=true
     password: 123456
-    username: book
+    username: root
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
   ai:
     openai:
-      api-key: sk-vir53o4YsOrBdAXZb236q1MwK16k0xy6nKLPVBtTSjc3uFxO
-      base-url: https://yinli.one
+      api-key:  sk-vir53o4YsOrBdAXZb236q1MwK16k0xy6nKLPVBtTSjc3uFxO
+      # 引力key sk-vir53o4YsOrBdAXZb236q1MwK16k0xy6nKLPVBtTSjc3uFxO
+      # 阿里key  sk-6ab42cd8ed0640e1857d3dd9866ef8d8
+      base-url:  https://yinli.one
+      # https://yinli.one
+      # https://dashscope.aliyuncs.com/compatible-mode
       chat:
         options:
-          model: gpt-4.1-mini
+          model: gpt-5.2
+          # qwen3.5-flash
   rabbitmq:
     host: 192.168.186.128
     port: 5672
