@@ -39,5 +39,5 @@ public interface CommunityService {
 
     List<MyCollectVO> getCollect();
 
-    MaybeLikeDTO maybeLike();
+    List<MaybeLikeDTO> maybeLike();
 }

@@ -92,6 +92,6 @@ public interface CommunityMapper {
     @Select("select title from t_post where id= #{postId}")
     String getTitle(Long postId);
 
-    @Select("select id as postId,title,content from t_post where title LIKE CONCAT('%', #{key}, '%')")
-    MaybeLikeDTO maybeLike(String key);
+    @Select("select id as postId,title from t_post where title LIKE CONCAT('%', #{key}, '%')")
+    List<MaybeLikeDTO> maybeLike(String key);
 }

@@ -8,6 +8,4 @@ import lombok.Data;
 public class MaybeLikeDTO {
     private Long postId;
     private String title;
-    /** 帖子内容 */
-    private String content;
 }

@@ -19,12 +19,10 @@ public class CommunityConsumer {
     @Autowired
     private RedisTemplate redisTemplate;
     //Prompt
-    private final String PROMPT ="你作为专业的关键词提取助手，必须严格遵守以下全部规则，不得出现任何违规输出：\n" +
-            "仅基于我后续提供的帖子标题原文进行分析，不得引入标题外的任何信息、主观联想或额外内容；\n" +
-            "从标题中精准提炼且仅提炼一个核心关键词，关键词需贴合标题核心主题，简洁凝练，为常用名词或核心动词，不使用长短语、修饰词及冗余表述；\n" +
-            "输出格式要求：仅输出一个关键词，不添加任何标点符号、序号、解释、说明、换行、前缀或后缀，不输出多余文字；\n" +
-            "禁止擅自增减关键词数量，禁止输出无关词汇，禁止对标题进行解读、总结或二次创作；\n" +
-            "收到我发送的帖子标题后，直接按规则输出结果，无需任何回应和铺垫。";
+    private final String PROMPT = "请你严格按照规则执行：\n"
+            + "1. 只从下面的标题中提取【一个】核心关键词\n"
+            + "2. 只输出关键词，不要任何标点、解释、多余文字\n"
+            + "3. 不要回答，不要描述，只返回结果\n";
     @RabbitListener(queues = RabbitMQCommunityConfig.COMMUNITY_QUEUE)
     public void receiveCommunityMessage(RabbitMQDTO message) {
         System.out.println("✅ 社区消息消费成功：" + message);
@@ -47,6 +45,7 @@ public class CommunityConsumer {
                         block,      // value：关键词
                         message.getWeight()  // score：权重/分数
                 );
+            System.out.println("✅ 成功存入redis");
         } catch (Exception e) {
             e.printStackTrace();
         }

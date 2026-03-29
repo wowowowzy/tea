@@ -167,7 +167,7 @@ public class CommunityController {
         }
     }
     /**
-     * 获取推荐文章
+     * 猜你想看
      * @return
      */
     @GetMapping("/maybeLike")

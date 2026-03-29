@@ -1,6 +1,5 @@
 package com.example.tea.service.impl;
 
-import com.example.tea.config.RabbitMQCommunityConfig;
 import com.example.tea.entity.dto.Community.*;
 import com.example.tea.entity.pojo.Community.Collect;
 import com.example.tea.entity.pojo.Community.Like;
@@ -23,12 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.tea.config.RabbitMQCommunityConfig.*;
+import static com.example.tea.config.RabbitMQCommunityConfig.COMMUNITY_EXCHANGE;
+import static com.example.tea.config.RabbitMQCommunityConfig.COMMUNITY_ROUTING_KEY;
 
 @Service
 public class CommunityServiceImpl implements CommunityService {
@@ -295,7 +294,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public MaybeLikeDTO maybeLike() {
+    public List<MaybeLikeDTO> maybeLike() {
         try {
             Long userId = ThreadLocalUserIdUtil.getCurrentId();
             String topKeyword = (String) redisTemplate.opsForZSet()
