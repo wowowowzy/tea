@@ -1,5 +1,6 @@
 package com.example.tea.service.impl;
 
+import com.example.tea.config.RabbitMQCommunityConfig;
 import com.example.tea.entity.dto.Community.*;
 import com.example.tea.entity.pojo.Community.Collect;
 import com.example.tea.entity.pojo.Community.Like;
@@ -15,8 +16,11 @@ import com.example.tea.utils.ThreadLocalUserIdUtil;
 import com.github.houbb.sensitive.word.core.SensitiveWordHelper;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,10 +28,21 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.tea.config.RabbitMQCommunityConfig.*;
+
 @Service
 public class CommunityServiceImpl implements CommunityService {
     @Autowired
     private CommunityMapper communityMapper;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private RedisTemplate redisTemplate;
+    private static final Long LIKE = 3L;
+    private static final Long COMMENT = 5L;
+    private static final Long COLLECT = 10L;
+    private static final Long VIEW = 1L;
+
 
     /**
      * 发布新帖子
@@ -80,6 +95,21 @@ public class CommunityServiceImpl implements CommunityService {
                         .map(isCancelDTO::getCollectCancel)
                         .orElse(-1)
         );
+
+        //异步社区算法加权
+        try {
+            RabbitMQDTO mqMsg = RabbitMQDTO.builder().
+                    postId(postId)
+                    .weight(VIEW)
+                    .userId(ThreadLocalUserIdUtil.getCurrentId())
+                    .build();
+            rabbitTemplate.convertAndSend(COMMUNITY_EXCHANGE,
+                    COMMUNITY_ROUTING_KEY,
+                    mqMsg);
+        } catch (AmqpException e) {
+            throw new RuntimeException(e);
+        }
+
         return detailVO;
     }
 
@@ -138,6 +168,19 @@ public class CommunityServiceImpl implements CommunityService {
             communityMapper.comment(newCommentDTO,ThreadLocalUserIdUtil.getCurrentId());
             communityMapper.addCommentNum(newCommentDTO.getPostId());
         }
+        //异步社区算法加权
+        try {
+            RabbitMQDTO mqMsg = RabbitMQDTO.builder().
+                    postId(newCommentDTO.getPostId())
+                    .weight(COMMENT)
+                    .userId(ThreadLocalUserIdUtil.getCurrentId())
+                    .build();
+            rabbitTemplate.convertAndSend(COMMUNITY_EXCHANGE,
+                    COMMUNITY_ROUTING_KEY,
+                    mqMsg);
+        } catch (AmqpException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -188,6 +231,19 @@ public class CommunityServiceImpl implements CommunityService {
                     .createTime(LocalDateTime.now())
                     .isCancel(1).build());
             communityMapper.likePost(postId,cancel);
+            //异步社区算法加权
+            try {
+                RabbitMQDTO mqMsg = RabbitMQDTO.builder().
+                        postId(postId)
+                        .weight(LIKE)
+                        .userId(ThreadLocalUserIdUtil.getCurrentId())
+                        .build();
+                rabbitTemplate.convertAndSend(COMMUNITY_EXCHANGE,
+                        COMMUNITY_ROUTING_KEY,
+                        mqMsg);
+            } catch (AmqpException e) {
+                throw new RuntimeException(e);
+            }
         }else {
             //老记录则传cancel=1为点赞,-1为取消
             communityMapper.updateLike(postId, ThreadLocalUserIdUtil.getCurrentId(), Like.TYPE_POST, cancel);
@@ -209,6 +265,19 @@ public class CommunityServiceImpl implements CommunityService {
                      .createTime(LocalDateTime.now())
                      .isCancel(1).build());
              communityMapper.collectPost(id,cancel);
+             //异步社区算法加权
+             try {
+                 RabbitMQDTO mqMsg = RabbitMQDTO.builder().
+                         postId(id)
+                         .weight(COLLECT)
+                         .userId(ThreadLocalUserIdUtil.getCurrentId())
+                         .build();
+                 rabbitTemplate.convertAndSend(COMMUNITY_EXCHANGE,
+                         COMMUNITY_ROUTING_KEY,
+                         mqMsg);
+             } catch (AmqpException e) {
+                 throw new RuntimeException(e);
+             }
          }else {//老记录则传cancel=1为点赞,-1为取消
              communityMapper.updateCollect(id, ThreadLocalUserIdUtil.getCurrentId(), cancel);
              communityMapper.collectPost(id,cancel);
@@ -221,6 +290,19 @@ public class CommunityServiceImpl implements CommunityService {
             List<Integer> postIdList = communityMapper.getCollect(ThreadLocalUserIdUtil.getCurrentId());
             return communityMapper.getPostListByPostId(postIdList);
         } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public MaybeLikeDTO maybeLike() {
+        try {
+            Long userId = ThreadLocalUserIdUtil.getCurrentId();
+            String topKeyword = (String) redisTemplate.opsForZSet()
+                    .reverseRange("user:" + userId, 0, 0)
+                    .stream().findFirst().orElse(null);
+            return communityMapper.maybeLike(topKeyword);
+        }catch (Exception e){
             throw new RuntimeException(e);
         }
     }

@@ -88,4 +88,10 @@ public interface CommunityMapper {
 
 
     isCancelDTO getCancel(Long currentId, Long postId);
+
+    @Select("select title from t_post where id= #{postId}")
+    String getTitle(Long postId);
+
+    @Select("select id as postId,title,content from t_post where title LIKE CONCAT('%', #{key}, '%')")
+    MaybeLikeDTO maybeLike(String key);
 }

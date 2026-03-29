@@ -83,7 +83,6 @@
         FROM `order` o
                  LEFT JOIN goods g ON o.goods_id = g.goods_id
                  LEFT JOIN order_detail od ON CAST(o.order_id AS CHAR) = od.order_id
-        WHERE o.status = 0
         ORDER BY o.create_time DESC
     </select>
 

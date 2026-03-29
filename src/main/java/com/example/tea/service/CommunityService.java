@@ -1,9 +1,6 @@
 package com.example.tea.service;
 
-import com.example.tea.entity.dto.Community.CommunityQueryDTO;
-import com.example.tea.entity.dto.Community.NewCommentDTO;
-import com.example.tea.entity.dto.Community.PostCreateDTO;
-import com.example.tea.entity.dto.Community.UpdateDTO;
+import com.example.tea.entity.dto.Community.*;
 import com.example.tea.entity.pojo.PageResult;
 import com.example.tea.entity.vo.Community.MyCollectVO;
 import com.example.tea.entity.vo.Community.MyPostVO;
@@ -41,4 +38,6 @@ public interface CommunityService {
     void switchCollect(Long id, Integer cancel);
 
     List<MyCollectVO> getCollect();
+
+    MaybeLikeDTO maybeLike();
 }

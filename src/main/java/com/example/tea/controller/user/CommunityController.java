@@ -166,4 +166,16 @@ public class CommunityController {
             return Result.error("暂无收藏");
         }
     }
+    /**
+     * 获取推荐文章
+     * @return
+     */
+    @GetMapping("/maybeLike")
+    public Result maybeLike(){
+        try {
+            return Result.success(communityService.maybeLike());
+        } catch (Exception e) {
+            return Result.error("暂无推荐");
+        }
+    }
 }
